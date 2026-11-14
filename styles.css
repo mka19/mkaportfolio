@@ -36,7 +36,7 @@ html,body,#fit{width:100%;height:100%;margin:0;overflow:hidden;background:#1a1a1
 @media(prefers-reduced-motion:reduce){#cat-head,#cat-arm,#cat-paw{transition:none!important}#cat-layer[data-press="true"] #cat-paw{transform:none}}
 
 /* Keep the keychain attached to the top edge even in taller browser windows. */
-.home{height:max(710px,var(--stage-height));top:0;transform:translateX(-50%) scale(var(--stage-scale,1));transform-origin:top center}
+.home{left:50%;right:auto;width:1602px;height:max(710px,var(--stage-height));top:0;transform:translateX(-50%) scale(var(--stage-scale,1));transform-origin:top center}
 .home .intro{top:auto;bottom:55px}
 /* Force the same color scheme at the iframe boundary, allowing transparency. */
 iframe.module,#runtime-stage iframe{color-scheme:light;background:transparent}
@@ -445,6 +445,7 @@ html:not([data-unbounded="ready"]) .project-label-wrap .project-label-art{conten
 .filters button,.filters button[aria-pressed=true]{padding:9px 10px!important;white-space:nowrap!important;font:400 13px/1 'Zalando Sans',Arial,sans-serif!important;background:transparent!important;box-shadow:none!important}
 .filters::before{left:0!important;top:4px!important;bottom:4px!important;width:var(--filter-pill-width)!important;transform:translateX(var(--filter-pill-x))!important;background:linear-gradient(180deg,rgba(26,26,26,.78),rgba(128,128,128,.52))!important;border:1px solid rgba(255,255,255,.28)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important}
 .filters::before{display:none!important}
+.filters button[aria-pressed=true]{background:linear-gradient(180deg,rgba(26,26,26,.78),rgba(128,128,128,.52))!important;border:1px solid rgba(255,255,255,.28)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important}
 
 /* The Projects route uses the entire existing stage; no added side gutters. */
 .project-view{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;background:transparent!important}
