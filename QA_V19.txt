@@ -1,0 +1,9 @@
+Using intercepted content preview: Direct navigation blocked by administrator
+native audio {'playing': True, 'muted': False, 'volume': 0.62, 'time': 0.256827, 'ready': 4, 'signal': 184}
+PASS pause
+PASS fourth button mouse activation from Home
+PASS fourth keyboard activation
+PASS music while viewing project
+Using intercepted content preview: Direct navigation blocked by administrator
+PASS mobile touch play and pause
+Errors: [] missing: []

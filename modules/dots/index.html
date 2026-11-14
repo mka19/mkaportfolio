@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Khaif — Illuminated Dot CTA</title>
+  <style>
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;background:transparent;overflow:hidden}
+    body{display:block;min-height:0;padding:0}
+    .grid{display:block;width:100%;height:100%;cursor:pointer;outline:0;background:transparent}
+    .grid:focus-visible{outline:2px solid #b36c79;outline-offset:6px}
+    .grid{position:relative}svg{position:absolute;inset:0;display:block;width:100%;height:100%;background:transparent;overflow:hidden}#matrix{opacity:1}
+  </style>
+</head>
+<body>
+  <a class="grid" href="mailto:" aria-label="Hi, let's talk. Open email.">
+    <svg viewBox="0 0 418 124" preserveAspectRatio="xMidYMid meet" id="matrix"></svg>
+  </a>
+  <script>
+  (() => {
+    const COLS=26,ROWS=8,WAVE=1080,EXIT=420;
+    const stages=[1250,1250,1250,1450,1700];
+    const CYCLE=stages.reduce((sum,v)=>sum+v,0);
+    const cream=[235,234,229],dark=[39,39,39],maroon=[137,52,67];
+    const svg=document.querySelector('#matrix'),target=document.querySelector('.grid');
+    const ns='http://www.w3.org/2000/svg';
+    const dots=[];
+    for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++){
+      const el=document.createElementNS(ns,'circle');
+      el.setAttribute('cx',(6.25+x*16.21).toFixed(2));
+      el.setAttribute('cy',(6.1+y*16.02).toFixed(2));
+      el.setAttribute('r','5.65');
+      el.setAttribute('fill','#272727');
+      svg.appendChild(el);
+      dots.push({x,y,el});
+    }
+    const mark=(m,x,y)=>{if(x>=0&&x<COLS&&y>=0&&y<ROWS)m.add(y*COLS+x)};
+    const glyph={
+      L:['1000','1000','1000','1000','1000','1111'],
+      E:['1111','1000','1110','1000','1000','1111'],
+      T:['1111','0110','0110','0110','0110','0110'],
+      S:['0111','1000','1100','0010','0001','1110'],
+      A:['0110','1001','1001','1111','1001','1001'],
+      K:['1001','1010','1100','1100','1010','1001'],
+      "'":['1','1','0','0','0','0']
+    };
+    const word=(text)=>{
+      const m=new Set();
+      const w=[...text].reduce((n,c)=>n+glyph[c][0].length+1,-1);
+      let x=Math.floor((COLS-w)/2);
+      for(const c of text){
+        glyph[c].forEach((line,ry)=>[...line].forEach((bit,rx)=>{if(bit==='1')mark(m,x+rx,ry+1)}));
+        x+=glyph[c][0].length+1;
+      }
+      return m;
+    };
+    const hi=new Set();
+    [{x:7,p:['10001','10001','11111','10001','10001','10001']},{x:14,p:['11111','00100','00100','00100','00100','11111']}].forEach(({x,p})=>p.forEach((line,y)=>[...line].forEach((bit,dx)=>{if(bit==='1')mark(hi,x+dx,y+1)})));
+    // Full symmetric heart, including the pointed tip. No compressed mask or cut-off last row.
+    const heart=new Set();
+    ['..####....####..','.######..######.','################','################','.##############.','...##########...','.....######.....','.......##.......'].forEach((line,y)=>[...line].forEach((bit,x)=>{if(bit==='#')mark(heart,x+5,y)}));
+    // Friendly waving hand silhouette, replaces the previous cat face.
+    const hand=new Set();
+    ['...#.#.#.#...','...#.#.#.#...','...#.###.#...','...#######...','..########...','...######....','....#####....','....####.....'].forEach((line,y)=>[...line].forEach((bit,x)=>{if(bit==='#')mark(hand,x+7,y)}));
+    const masks=[hi,word("LET'S"),word('TALK'),heart,hand];
+    const clamp=v=>Math.max(0,Math.min(1,v));
+    const ease=v=>{v=clamp(v);return v*v*(3-2*v)};
+    const mix=(a,b,t)=>a+(b-a)*t;
+    const hex=v=>'#'+v.map(x=>Math.round(x).toString(16).padStart(2,'0')).join('');
+    function intensity(i,t){
+      const d=dots[i];
+      if(t<WAVE){
+        const head=-2.4+(t/WAVE)*(COLS+5.5),delta=d.x-head;
+        const peak=Math.exp(-.5*(delta/1.18)**2),aura=Math.exp(-.5*(delta/3.1)**2)*.37;
+        return {light:clamp(peak*.93+aura),warmth:delta<0?Math.exp(delta/3.6)*.55:0,anchorBase:1};
+      }
+      const cycleIndex=Math.floor((t-WAVE)/CYCLE);
+      const elapsed=(t-WAVE)%CYCLE;
+      let offset=0;
+      for(let stage=0;stage<stages.length;stage++){
+        if(elapsed<offset+stages[stage]){
+          const local=elapsed-offset,transition=ease(local/320);
+          const previous=stage===0?stages.length-1:stage-1;
+          const old=stage===0&&cycleIndex===0?0:Number(masks[previous].has(i));
+          let next=Number(masks[stage].has(i));
+          if(stage===3){
+            const scale=.12+.88*ease(local/880);
+            const mx=Math.round(12.5+(d.x-12.5)/scale),my=Math.round(3.5+(d.y-3.5)/scale);
+            next=mx>=0&&mx<COLS&&my>=0&&my<ROWS?Number(heart.has(my*COLS+mx)):0;
+          }
+          if(stage===4){const shift=Math.round(Math.sin(local/190)*1.5);const mx=d.x-shift;next=mx>=0&&mx<COLS?Number(hand.has(d.y*COLS+mx)):0;const wave=(Math.floor(local/270)%2===0);if(wave&&((d.x===5&&d.y===2)||(d.x===4&&d.y===3)||(d.x===21&&d.y===2)||(d.x===22&&d.y===3)))next=1;}
+          return {light:mix(old,next,transition),warmth:0,anchorBase:stage===0&&cycleIndex===0?1-transition:0};
+        }
+        offset+=stages[stage];
+      }
+      return {light:0,warmth:0,anchorBase:0};
+    }
+    let phase='rest',start=0,leaveAt=0,raf=0;
+    let values=dots.map(()=>({light:0,warmth:0,anchorBase:0}));
+    let outgoing=[];
+    function paint(next){
+      next.forEach(({light,warmth,anchorBase},i)=>{
+        const d=dots[i];
+        const rest=dark;
+        const lit=rest.map((v,k)=>mix(v,cream[k],light));
+        const colored=lit.map((v,k)=>mix(v,maroon[k],warmth*(1-light)*.26));
+        d.el.setAttribute('fill',hex(colored));
+        d.el.setAttribute('r','5.65');
+      });
+      values=next;
+    }
+    function frame(now){
+      if(phase==='run')paint(dots.map((_,i)=>intensity(i,now-start)));
+      else if(phase==='exit'){
+        const k=ease((now-leaveAt)/EXIT);
+        paint(outgoing.map(v=>({light:v.light*(1-k),warmth:0,anchorBase:0})));
+        if(k>=1){phase='rest';raf=0;return}
+      }else{raf=0;return}
+      raf=requestAnimationFrame(frame);
+    }
+    function enter(){
+      if(phase==='run')return;
+      cancelAnimationFrame(raf);
+      start=performance.now();
+      phase='run';
+      raf=requestAnimationFrame(frame);
+    }
+    function leave(){
+      if(phase!=='run')return;
+      cancelAnimationFrame(raf);
+      outgoing=values.map(v=>({...v}));
+      phase='exit';
+      leaveAt=performance.now();
+      raf=requestAnimationFrame(frame);
+    }
+    target.addEventListener('pointerenter',enter);
+    target.addEventListener('pointerleave',leave);
+    target.addEventListener('focus',enter);
+    target.addEventListener('blur',leave);
+  })();
+  </script>
+</body>
+</html>

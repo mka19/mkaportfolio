@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chrome music dial — Oh Lord · Foxy Shazam</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    /* Match the selected Figma button frame, not the browser viewport. */
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; color-scheme:dark; background:transparent; }
+    body {
+      display: grid;
+      place-items: center;
+      background: transparent;
+    }
+    #music-control {
+      appearance: none;
+      display: block;
+      /* The supplied chrome artwork sits 2.3px inside the 46px frame. */
+      width: 41.4px; height: 41.4px;
+      min-width: 0; min-height: 0;
+      margin: 0; padding: 0; border: 0; outline: none;
+      background: transparent;
+      border-radius: 50%;
+      position: relative;
+      cursor: pointer;
+      touch-action: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #music-control::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: url('assets/dial-reference.png') center / 100% 100% no-repeat;
+      transform: rotate(var(--knob-angle, 0deg));
+      /* Rotate the original pixels directly, without hover-upscaling or
+         a second animated transform that can blur the fine grooves. */
+      transform-origin: 50% 50%;
+      backface-visibility: hidden;
+      will-change: transform;
+      pointer-events: none;
+    }
+    #music-control:focus-visible { outline: 1px solid #dedede; outline-offset: -2px; border-radius: 50%; }
+    #morph-ring {
+      position: absolute;
+      width: 44.8%; height: 44.8%;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      overflow: visible;
+      pointer-events: none;
+      filter: drop-shadow(0 1.2px 1.4px rgba(0,0,0,.52)) drop-shadow(0 0 1.5px rgba(213,241,255,.38));
+    }
+    audio { display: none; }
+  </style>
+</head>
+<body>
+  <!-- Preview only: the original dial screenshot is a background reference.
+       The production interaction layer contains no replacement knob artwork. -->
+  <button id="music-control" type="button" aria-label="Play Oh Lord by Foxy Shazam" aria-pressed="false">
+    <svg id="morph-ring" viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <linearGradient id="chrome" x1="0" y1="0" x2="100" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#6d8494"/>
+          <stop offset="17%" stop-color="#b5cbd9"/>
+          <stop offset="27%" stop-color="#f0faff"/>
+          <stop offset="31%" stop-color="#ffffff"/>
+          <stop offset="35%" stop-color="#a5e2f7"/>
+          <stop offset="46%" stop-color="#8caebf"/>
+          <stop offset="61%" stop-color="#637888"/>
+          <stop offset="73%" stop-color="#d3e8f2"/>
+          <stop offset="80%" stop-color="#ffffff"/>
+          <stop offset="85%" stop-color="#abd4e7"/>
+          <stop offset="100%" stop-color="#748e9e"/>
+        </linearGradient>
+      </defs>
+      <path id="chrome-shape" fill="none" stroke="url(#chrome)" stroke-width="15.5"
+        stroke-linejoin="round" stroke-linecap="round"
+        d="M50 19 C67 19 81 33 81 50 C81 67 67 81 50 81 C33 81 19 67 19 50 C19 33 33 19 50 19 Z"/>
+    </svg>
+  </button>
+  <audio id="soundtrack" preload="none" loop src="assets/foxy-shazam-oh-lord.mp3"></audio>
+  <script>
+  (() => {
+    'use strict';
+    const button = document.getElementById('music-control');
+    const audio = document.getElementById('soundtrack');
+    let shared=null; try{shared=window.parent!==window?window.parent.MKAMusic:null}catch{}
+    let syncState=null;
+    if(shared){audio.removeAttribute('src');audio.removeAttribute('loop');audio.load();}
+    const chromeShape = document.getElementById('chrome-shape');
+    const chromeGradient = document.getElementById('chrome');
+    const TAU = Math.PI * 2;
+    const clamp = (n, a, b) => Math.min(b, Math.max(a, n));
+    const ease = (speed, dt) => 1 - Math.exp(-speed * dt);
+    const lerp = (a, b, t) => a + (b - a) * t;
+    let ctx = null, source = null, analyser = null, gain = null, bins = null;
+    let volume = 0.62;
+    let isPlaying = false;
+    let activeState = 0;
+    let last = performance.now();
+    let pointer = null;
+    let pauseToken = 0;
+    let morphAmount = 0, gradientAngle = 0, shapeClock = 0;
+
+    // A single continuous stroked contour moves between a perfect O and a
+    // true sideways infinity symbol (two open lobes with a centre crossing).
+    // Matching spline topology prevents any pop or shape swap on pause.
+    function flowingInfinityPath(amount, clock) {
+      const count = 96;
+      const points = [];
+      for (let i = 0; i < count; i++) {
+        const theta = i / count * TAU;
+        const circleX = 30.5 * Math.cos(theta);
+        const circleY = 30.5 * Math.sin(theta);
+        const loopX = 35 * Math.cos(theta);
+        const loopY = 17.5 * Math.sin(2 * theta);
+        // Very small traveling ripples make the infinity feel alive without
+        // changing its silhouette into a shaky or jagged equalizer.
+        const rippleX = .64 * Math.sin(3 * theta + clock * 1.7);
+        const rippleY = .7 * Math.sin(4 * theta - clock * 1.4);
+        points.push([
+          50 + lerp(circleX, loopX, amount) + rippleX * amount,
+          50 + lerp(circleY, loopY, amount) + rippleY * amount
+        ]);
+      }
+      const segment = [];
+      for (let i = 0; i < count; i++) {
+        const previous = points[(i + count - 1) % count];
+        const current = points[i];
+        const next = points[(i + 1) % count];
+        const nextNext = points[(i + 2) % count];
+        const c1 = [current[0] + (next[0] - previous[0]) / 6, current[1] + (next[1] - previous[1]) / 6];
+        const c2 = [next[0] - (nextNext[0] - current[0]) / 6, next[1] - (nextNext[1] - current[1]) / 6];
+        segment.push(`C${c1[0].toFixed(2)} ${c1[1].toFixed(2)} ${c2[0].toFixed(2)} ${c2[1].toFixed(2)} ${next[0].toFixed(2)} ${next[1].toFixed(2)}`);
+      }
+      return `M${points[0][0].toFixed(2)} ${points[0][1].toFixed(2)} ${segment.join(' ')} Z`;
+    }
+
+    function initAudio() {
+      if (ctx) return;
+      const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextConstructor) throw new Error('Web Audio is unavailable');
+      ctx = new AudioContextConstructor();
+      source = ctx.createMediaElementSource(audio);
+      analyser = ctx.createAnalyser();
+      analyser.fftSize = 1024;
+      analyser.smoothingTimeConstant = 0.76;
+      bins = new Uint8Array(analyser.frequencyBinCount);
+      gain = ctx.createGain();
+      gain.gain.value = volume;
+      source.connect(analyser);
+      analyser.connect(gain);
+      gain.connect(ctx.destination);
+    }
+
+    async function toggle() {
+      if(shared){await shared.toggle();return;}
+      const next = !isPlaying;
+      const ticket = ++pauseToken;
+      try {
+        initAudio();
+        await ctx.resume();
+        if (ticket !== pauseToken) return;
+        if (next) {
+          audio.volume = 1;
+          gain.gain.setTargetAtTime(volume, ctx.currentTime, 0.08);
+          await audio.play();
+        } else {
+          // Animate the sound and bars down together; keep the playhead position.
+          gain.gain.setTargetAtTime(0, ctx.currentTime, 0.065);
+          window.setTimeout(() => {
+            if (ticket === pauseToken && !isPlaying) audio.pause();
+          }, 250);
+        }
+        if (ticket !== pauseToken) return;
+        isPlaying = next;
+        button.setAttribute('aria-pressed', String(isPlaying));
+        button.setAttribute('aria-label', `${isPlaying ? 'Pause' : 'Play'} Oh Lord by Foxy Shazam`);
+      } catch (error) {
+        isPlaying = false;
+        button.setAttribute('aria-pressed', 'false');
+        console.error('Unable to play the supplied MP3:', error);
+      }
+    }
+
+    function setVolume(next) {
+      volume = clamp(next, 0, 1);
+      if(shared)shared.setVolume(volume);
+      if (ctx && gain) gain.gain.setTargetAtTime(isPlaying ? volume : 0, ctx.currentTime, 0.055);
+      button.style.setProperty('--knob-angle', `${(volume - 0.62) * 245}deg`);
+      button.title = `Oh Lord — volume ${Math.round(volume * 100)}%`; 
+      button.setAttribute('aria-valuenow', String(Math.round(volume * 100)));
+    }
+
+    function pointerPosition(event) {
+      const b = button.getBoundingClientRect();
+      const x = event.clientX - b.left - b.width / 2;
+      const y = event.clientY - b.top - b.height / 2;
+      return { x, y, radius: Math.hypot(x, y) / (Math.min(b.width, b.height) / 2), angle: Math.atan2(y, x) };
+    }
+
+    button.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0 && event.pointerType !== 'touch') return;
+      const p = pointerPosition(event);
+      pointer = { id: event.pointerId, x: event.clientX, y: event.clientY,
+                  lastAngle: p.angle, rim: p.radius > 0.53, moved: false };
+      button.setPointerCapture(event.pointerId);
+    });
+    button.addEventListener('pointermove', (event) => {
+      if (!pointer || event.pointerId !== pointer.id) return;
+      if (Math.hypot(event.clientX - pointer.x, event.clientY - pointer.y) > 2) pointer.moved = true;
+      if (!pointer.moved || !pointer.rim) return;
+      const p = pointerPosition(event);
+      let angleDiff = p.angle - pointer.lastAngle;
+      if (angleDiff > Math.PI) angleDiff -= TAU;
+      if (angleDiff < -Math.PI) angleDiff += TAU;
+      pointer.lastAngle = p.angle;
+      // 270° twist = full scale. No sudden jump when grabbing a rim position.
+      setVolume(volume + angleDiff / (Math.PI * 1.5));
+    });
+    button.addEventListener('pointerup', (event) => {
+      if (!pointer || event.pointerId !== pointer.id) return;
+      const clickCentre = !pointer.moved;
+      pointer = null;
+      if (clickCentre) void toggle();
+    });
+    button.addEventListener('pointercancel', () => { pointer = null; });
+    button.addEventListener('wheel', (event) => {
+      event.preventDefault();
+      setVolume(volume - Math.sign(event.deltaY) * 0.045);
+    }, { passive: false });
+    button.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowUp' || event.key === 'ArrowRight') {
+        event.preventDefault(); setVolume(volume + .05);
+      } else if (event.key === 'ArrowDown' || event.key === 'ArrowLeft') {
+        event.preventDefault(); setVolume(volume - .05);
+      } else if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault(); void toggle();
+      }
+    });
+
+    function draw(now) {
+      const dt = clamp((now - last) / 1000, 0.001, 0.05);
+      last = now;
+      try { const current=window.parent!==window?window.parent.MKAMusic:null; if(current){shared=current;const state=current.getState();if(state.playing!==isPlaying||state.volume!==volume||!syncState){isPlaying=state.playing;volume=state.volume;button.setAttribute('aria-pressed',String(isPlaying));button.style.setProperty('--knob-angle',`${(volume-.62)*245}deg`);syncState=state;}} } catch {}
+      activeState = lerp(activeState, isPlaying ? 1 : 0, ease(isPlaying ? 7.2 : 8.5, dt));
+      // Preserve the original etched grooves baked into dial-reference.png.
+      // No animated white tick overlay: the knob rotation shows volume.
+
+      if(shared){if(!bins)bins=new Uint8Array(512);shared.readFrequencyData(bins);}else if (analyser) analyser.getByteFrequencyData(bins);
+      let energyTotal = 0;
+      if (bins && isPlaying) {
+        for (let i = 3; i < 115; i += 4) energyTotal += bins[i] / 255;
+        energyTotal /= 28;
+      }
+
+      // Press play: morph into infinity and keep the highlight streaming.
+      // Press pause: the moving path gently resolves to an exact, still O.
+      if (isPlaying) shapeClock += dt * (1.0 + energyTotal * .11);
+      morphAmount = lerp(morphAmount, activeState, ease(isPlaying ? 5.2 : 6.0, dt));
+      if (morphAmount < .0005) morphAmount = 0;
+      chromeShape.setAttribute('d', flowingInfinityPath(morphAmount, shapeClock));
+      chromeShape.setAttribute('stroke-width', (15.5 - 3.5 * morphAmount).toFixed(2));
+      // Reflections orbit only while sound plays; no idle rotation on O.
+      if (isPlaying) gradientAngle = (gradientAngle + dt * (120 + energyTotal * 75)) % 360;
+      chromeGradient.setAttribute('gradientTransform', `rotate(${gradientAngle.toFixed(2)} 50 50)`);
+      requestAnimationFrame(draw);
+    }
+
+    addEventListener('message',e=>{if(e.source!==parent||e.data?.type!=='mka:music-state')return;const st=e.data.state;isPlaying=!!st.playing;volume=Number(st.volume);button.setAttribute('aria-pressed',String(isPlaying));button.style.setProperty('--knob-angle',`${(volume-.62)*245}deg`);});
+    if(shared){const unsubscribe=shared.subscribe(s=>{isPlaying=s.playing;volume=s.volume;button.setAttribute('aria-pressed',String(s.playing));button.setAttribute('aria-label',`${s.playing?'Pause':'Play'} ${s.title} by ${s.artist}`);button.style.setProperty('--knob-angle',`${(s.volume-.62)*245}deg`);});addEventListener('pagehide',unsubscribe,{once:true});}else setVolume(volume);
+    requestAnimationFrame(draw);
+  })();
+  </script>
+</body>
+</html>

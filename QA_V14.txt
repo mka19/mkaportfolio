@@ -1,0 +1,18 @@
+PASS native music playback {'playing': True, 'volume': 0.62, 'currentTime': 0.233848, 'duration': 250.586667, 'trackIndex': 0, 'title': 'Oh Lord', 'artist': 'Foxy Shazam', 'error': ''}
+PASS ticker motion
+PASS clock
+PASS license page
+flip matrix matrix3d(0.973611, 0, 0.228214, 0, -0.00463599, 0.999794, 0.0197781, 0, -0.228167, -0.0203142, 0.97341, 0, 0, -5.43199, 16.296, 1)
+PASS freelance flip
+PASS card return
+PASS movies page
+movie rating 9.8/10 9.7/10
+PASS wheel
+movie gaps [8, 14]
+entrance during page False True
+PASS mixtape delayed entry and music persistence
+PASS pause
+PASS permanent grid 208 5.65
+errors [] missing []
+
+Test harness: Chromium rendered the actual source via intercepted asset responses and srcdoc for modules; local browser navigation blocked by environment policy. No physical speaker verification.

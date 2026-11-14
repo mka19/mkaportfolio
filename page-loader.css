@@ -1,0 +1,5 @@
+#matrix-page-loader{position:fixed;inset:0;z-index:2147483647;display:grid;background:#111;overflow:hidden;pointer-events:auto;contain:strict}
+#matrix-page-loader .matrix-tile{background:#111;transform:scale(1.04);opacity:1;will-change:transform,opacity;transition-property:transform,opacity;transition-duration:380ms;transition-timing-function:cubic-bezier(.55,.05,.25,1)}
+#matrix-page-loader.matrix-clearing{background:transparent;pointer-events:none}
+#matrix-page-loader.matrix-clearing .matrix-tile{transform:scale(0);opacity:0}
+@media(prefers-reduced-motion:reduce){#matrix-page-loader .matrix-tile{transition-duration:1ms!important}}

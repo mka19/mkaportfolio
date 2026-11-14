@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Zalando Sans:Light";
+  src: url("https://static.figma.com/font/ZalandoSans_wdth_wght__1") format("woff2");
+  font-style: normal;
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Zalando Sans:Regular";
+  src: url("https://static.figma.com/font/ZalandoSans_wdth_wght__1") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+}
+
+@layer base {
+  :root {
+    color: #fff;
+    background: #171717;
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100dvh;
+    background: #171717;
+  }
+}
+
+.app-shell {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  padding: 24px;
+}
+
+.live-clock {
+  display: flex;
+  width: 75px;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+
+.clock-face {
+  position: relative;
+  width: 75px;
+  height: 75px;
+  flex: none;
+}
+
+.clock-face img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 75px;
+  height: 75px;
+}
+
+/* The source SVG's hands are one path, so this exposes its exact face and ticks. */
+.clock-center-mask {
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background: #d9d9d9;
+}
+
+.clock-hand {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  width: 3px;
+  border-radius: 999px;
+  background: #000;
+  transform-origin: 50% 100%;
+  transition: transform 120ms linear;
+}
+
+.clock-hand-hour {
+  height: 21px;
+}
+
+.clock-hand-minute {
+  height: 29px;
+}
+
+.clock-pin {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5.5px;
+  height: 5.5px;
+  border-radius: 50%;
+  background: #000;
+  transform: translate(-50%, -50%);
+}
+
+.clock-copy {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  line-height: normal;
+  text-align: center;
+  word-break: break-word;
+}
+
+.clock-time {
+  width: 100%;
+  font-family: "Zalando Sans:Regular", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  font-variation-settings: "wdth" 100;
+  letter-spacing: -0.8px;
+  color: #fff;
+}
+
+.clock-calendar {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 1px;
+  font-family: "Zalando Sans:Light", sans-serif;
+  font-size: 12px;
+  font-weight: 300;
+  font-variation-settings: "wdth" 100;
+  letter-spacing: -0.6px;
+  color: rgb(255 255 255 / 54%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clock-hand {
+    transition: none;
+  }
+}

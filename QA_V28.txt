@@ -1,0 +1,10 @@
+V28 final assembly checks
+- JavaScript syntax checked: app.js, music.js, pixel-transition.js, portfolio-server.cjs.
+- Case Study SVG preserveAspectRatio=none; full-size background CSS.
+- Unbounded requested via Google Fonts; original Figma outlines fallback.
+- V9 keychain integration present.
+- About V11 matches supplied HTML after excluding added host-bridge script tag.
+- Resume matches supplied PDF byte-for-byte.
+- Static references checked: 140; two development-only source-project entry references are Vite root-relative, not used by the runtime.
+- Browser verification of this final assembly blocked by administrator navigation policy; no full end-to-end pass claimed.
+- Previous QA logs describe earlier versions, not new tests.

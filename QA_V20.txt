@@ -1,0 +1,30 @@
+V20: WebGL Keychain V8 integration + exact mascot pose mapping
+
+Original V8 SHA-256: 31fc0050980b267a616728295f1153a7a74d4edf80214ce25fc1927b2a0fdadd
+Both embedded JavaScript blocks and app.js pass node --check. No external script/model dependencies detected in V8 HTML.
+
+Browser test (actual assets via intercepted preview, no GPU context available):
+KEYCHAIN {'context': False, 'error': 'grid', 'hasStage': True, 'hasAPI': False, 'hasData': True}
+GEOMETRY {'x': 447, 'y': -51, 'w': 707, 'h': 551, 'background': 'rgba(0, 0, 0, 0)', 'border': '0px'}
+PASS failure-only fallback; real GPU unavailable in this Chromium environment
+METAL 1 {'cat': 'button', 'pose': 'left', 'headVisible': 'false', 'pawVisible': 'true', 'press': 'false', 'group': 'projects', 'headKind': 'side', 'headSide': 'right', 'side': 'left', 'target': 'metal-1'}
+METAL 2 {'cat': 'button', 'pose': 'right', 'headVisible': 'true', 'pawVisible': 'true', 'press': 'false', 'group': 'projects', 'headKind': 'side', 'headSide': 'right', 'side': 'right', 'target': 'metal-2'}
+METAL 3 {'cat': 'button', 'pose': 'left', 'headVisible': 'false', 'pawVisible': 'true', 'press': 'false', 'group': 'projects', 'headKind': 'side', 'headSide': 'right', 'side': 'left', 'target': 'metal-3'}
+METAL 4 {'cat': 'button', 'pose': 'right', 'headVisible': 'true', 'pawVisible': 'true', 'press': 'false', 'group': 'projects', 'headKind': 'side', 'headSide': 'right', 'side': 'right', 'target': 'metal-4'}
+PASS pose home left false
+PASS pose projects left false
+PASS pose cv cv false
+PASS pose gallery top true
+PASS pose keyboard top true
+PASS pose freelance bottom false
+PASS pose onji bottom false
+PASS pose onexcell bottom false
+PASS pose you left true
+PASS group-only peek
+PASS no paw on color control
+PASS exit
+PASS Sextillion navigation
+PASS native music play/pause
+Errors [] missing []
+
+Actual WebGL rendering and physics were not verified in this environment.

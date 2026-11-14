@@ -1,0 +1,5 @@
+MKA PORTFOLIO — FULL WEBSITE V28
+
+Extract the ZIP to a new folder. Open the mka-portfolio folder and double-click START_PORTFOLIO.bat. Keep the server window open and visit http://localhost:8000/. Node.js or Python is required. Do not open index.html directly as file://. No previous ZIPs are required.
+
+This complete build includes the V9 interactive keychain, original About V11 with the host bridge, original contact controls with native links, original resume PDF, PixelTransition, music and movie hover clips, and V28 Case Study background and typography corrections. Unbounded is loaded from Google Fonts; original Figma outlines are used if the font cannot load. WebGL requires browser support; transparent artwork is provided as fallback. Only the supplied music recording is included. Project filters without supplied project records remain empty; no fabricated case studies are included.

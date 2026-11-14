@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Original Metallic Buttons — Interactive Code Layer</title><style>
+@import url('https://fonts.googleapis.com/css2?family=Zalando+Sans:wght@400;500;600&display=swap');
+:root {color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;min-width:0;min-height:0}
+body{background:transparent;font-family:system-ui, sans-serif}
+.button-row{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:31.68px;width:max-content;max-width:none;padding:0;margin:0;background:transparent}
+.slot{position:relative; flex:0 0 116.7px;width:116.7px;height:117.14px;overflow:visible;isolation:isolate}
+.metal-button{width:116.7px;height:117.14px;display:block;position:absolute;inset:0;margin:0;padding:0;border:0;border-radius:0;outline:none;background:transparent;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;transform-origin:center;transform:scale(1);transition:transform 275ms cubic-bezier(.18,1.15,.28,1);will-change:transform}
+.metal-button.is-down{transform:scale(.915);transition:transform 110ms cubic-bezier(.26,0,.62,1)}
+.plate{position:absolute;inset:0;display:block;pointer-events:none;transform:translate3d(0,0,0);will-change:transform}
+.metal-button.is-hovering:not(.is-down) .plate{animation:micro-slide 1700ms ease-in-out infinite}
+@keyframes micro-slide{0%,100%{transform:translate3d(0,0,0)}25%{transform:translate3d(-1.15px,0,0)}65%{transform:translate3d(1.15px,0,0)}}
+.plate img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;pointer-events:none;image-rendering:auto}
+.plate .lit{opacity:0;transition:opacity 205ms cubic-bezier(.2,.7,.2,1)}
+.metal-button.is-lit .lit{opacity:1}
+.metal-button:focus-visible{outline:2px solid var(--focus-color,#eee);outline-offset:0;border-radius:50%}
+.metal-button[data-tooltip]::after{content:attr(data-tooltip);position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-42%);max-width:92px;padding:5px 7px;border:1px solid #4a4a4a;border-radius:5px;background:#171717;color:#fff;font:500 12px/1.1 'Zalando Sans',Arial,sans-serif;text-align:center;white-space:normal;opacity:0;pointer-events:none;transition:opacity 150ms ease,transform 210ms cubic-bezier(.22,.75,.22,1)}
+.metal-button[data-tooltip]:is(:hover,:focus-visible)::after{opacity:1;transform:translate(-50%,-50%)}
+@media (prefers-reduced-motion:reduce){.metal-button.is-hovering:not(.is-down) .plate{animation:none}.metal-button,.plate .lit{transition-duration:80ms}}
+
+.button-row{display:grid;grid-template-columns:116.7px 116.7px;column-gap:34.06px;row-gap:25.0px;transform:scale(.944);transform-origin:top left;}
+</style><style id="mka-fit-panel-v11">html,body{width:100%;height:100%;overflow:hidden!important;scrollbar-width:none!important;background:transparent!important}*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}.button-row{width:100%;height:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));column-gap:32px;row-gap:23.6px;transform:none;align-items:center;justify-items:center;padding:1px 0;margin:0;overflow:hidden}.slot{width:min(100%,110.17px);height:auto;aspect-ratio:116.7/117.14;min-width:0;min-height:0}.metal-button{width:100%;height:100%}</style>
+</head>
+<body><main class="button-row" aria-label="Four metallic interactive buttons"><div class="slot"><button class="metal-button" type="button" style="--focus-color:#fa840f" aria-label="Open Piplix project"><span class="plate"><img class="base" src="Frame 1948760021.png" alt="" draggable="false"><img class="lit" src="Frame 1948760009.png" alt="" draggable="false"></span></button></div>
+<div class="slot"><button class="metal-button" type="button" style="--focus-color:#dad2ff" aria-label="Open Stride Media project"><span class="plate"><img class="base" src="Frame 1948760022.png" alt="" draggable="false"><img class="lit" src="Frame 1948760007.svg" alt="" draggable="false"></span></button></div>
+<div class="slot"><button class="metal-button" type="button" style="--focus-color:#a9fff3" aria-label="Open Solitaire Markets project"><span class="plate"><img class="base" src="Frame 1948760023.png" alt="" draggable="false"><img class="lit" src="Frame 1948760008.png" alt="" draggable="false"></span></button></div>
+<div class="slot"><button class="metal-button" type="button" style="--focus-color:#ead688" aria-label="Open Sextillion project" data-mka-route="sextillion"><span class="plate"><img class="base" src="Frame 1948760017.png" alt="" draggable="false"><img class="lit" src="Frame 1948760020.png" alt="" draggable="false"></span></button></div></main><script>
+(()=>{
+'use strict';
+let audioContext;
+function clickSound(){
+  const Ctx=window.AudioContext||window.webkitAudioContext;
+  if(!Ctx)return;
+  try{
+    audioContext=audioContext||new Ctx();
+    if(audioContext.state==='suspended')audioContext.resume();
+    const t=audioContext.currentTime;
+    const duration=.035;
+    const len=Math.floor(audioContext.sampleRate*duration);
+    const buffer=audioContext.createBuffer(1,len,audioContext.sampleRate);
+    const samples=buffer.getChannelData(0);
+    for(let i=0;i<len;i++)samples[i]=(Math.random()*2-1)*Math.exp(-i/(audioContext.sampleRate*.006));
+    const noise=audioContext.createBufferSource();noise.buffer=buffer;
+    const filter=audioContext.createBiquadFilter();filter.type='bandpass';filter.frequency.value=1500;filter.Q.value=.62;
+    const sharp=audioContext.createGain();sharp.gain.setValueAtTime(.11,t);sharp.gain.exponentialRampToValueAtTime(.001,t+.034);
+    noise.connect(filter).connect(sharp).connect(audioContext.destination);noise.start(t);noise.stop(t+duration);
+    const tone=audioContext.createOscillator();tone.type='sine';tone.frequency.setValueAtTime(185,t);tone.frequency.exponentialRampToValueAtTime(86,t+.058);
+    const low=audioContext.createGain();low.gain.setValueAtTime(.001,t);low.gain.linearRampToValueAtTime(.09,t+.003);low.gain.exponentialRampToValueAtTime(.001,t+.073);
+    tone.connect(low).connect(audioContext.destination);tone.start(t);tone.stop(t+.077);
+  }catch(e){/* sound is optional */}
+}
+const fourth=document.querySelector('[data-mka-route="sextillion"]');
+function openSextillion(){try{if(typeof parent.MKAOpenSextillion==='function'){parent.MKAOpenSextillion();return;}}catch{}parent.postMessage({type:'mka:open-sextillion'},'*');}
+fourth.addEventListener('click',openSextillion);
+fourth.addEventListener('keyup',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openSextillion();}});
+const pointerFine=window.matchMedia('(hover:hover) and (pointer:fine)');
+for(const button of document.querySelectorAll('.metal-button')){
+  let hovered=false,pointerHeld=false,keyHeld=false,releaseTimer=0;
+  function light(on){button.classList.toggle('is-lit',Boolean(on))}
+  function press(){clearTimeout(releaseTimer);button.classList.add('is-down');light(true)}
+  function release(){clearTimeout(releaseTimer);button.classList.remove('is-down');light((hovered&&pointerFine.matches)||keyHeld)}
+  button.addEventListener('pointerenter',e=>{if(pointerFine.matches&&e.pointerType!=='touch'){hovered=true;button.classList.add('is-hovering');light(true)}});
+  button.addEventListener('pointerleave',()=>{hovered=false;button.classList.remove('is-hovering');if(!pointerHeld&&!keyHeld)light(false)});
+  button.addEventListener('pointerdown',e=>{if(e.button!==0)return;pointerHeld=true;press();clickSound()});
+  const up=()=>{if(!pointerHeld)return;pointerHeld=false;releaseTimer=setTimeout(release,85)};
+  window.addEventListener('pointerup',up);
+  button.addEventListener('pointercancel',()=>{pointerHeld=false;release()});
+  button.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();keyHeld=true;press();clickSound()}});
+  button.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();keyHeld=false;release()}});
+  button.addEventListener('blur',()=>{keyHeld=false;if(!pointerHeld)release()});
+}
+})();
+</script></body></html>

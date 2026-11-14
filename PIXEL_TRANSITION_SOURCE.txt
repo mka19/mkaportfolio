@@ -1,0 +1,3 @@
+Reference: https://github.com/codrops/PixelTransition
+Article: https://tympanus.net/codrops/2023/04/05/ideas-for-pixel-page-transitions/
+Original reference: Manoela Ilic / Codrops, MIT licensed. This portfolio uses a new dependency-free adaptation of the reference grid-cover/reveal approach, not a verbatim copy of the repository demo.

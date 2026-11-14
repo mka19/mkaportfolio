@@ -1,0 +1,17 @@
+MKA V18 focused Chromium preview tests
+
+freelance mid {'route': 'freelance', 'hold': True, 'reveal': False, 'overlay': True, 'left': '1', 'right': '1', 'leftTransform': 'none', 'visible': True, 'pairsVisibility': 'hidden'}
+freelance after {'route': 'freelance', 'hold': False, 'reveal': True, 'overlay': False, 'left': '0', 'right': '0', 'leftTransform': 'matrix(1, 0, 0, 1, 0, 32)', 'visible': True, 'pairsVisibility': 'visible'}
+freelance settled {'route': 'freelance', 'hold': False, 'reveal': True, 'overlay': False, 'left': '1', 'right': '1', 'leftTransform': 'matrix(1, 0, 0, 1, 0, 0)', 'visible': True, 'pairsVisibility': 'visible'}
+onji mid {'route': 'onji', 'hold': True, 'reveal': False, 'overlay': True, 'left': '1', 'right': '1', 'leftTransform': 'none', 'visible': True, 'pairsVisibility': 'hidden'}
+onji after {'route': 'onji', 'hold': False, 'reveal': True, 'overlay': False, 'left': '0', 'right': '0', 'leftTransform': 'matrix(1, 0, 0, 1, 0, 32)', 'visible': True, 'pairsVisibility': 'visible'}
+onji settled {'route': 'onji', 'hold': False, 'reveal': True, 'overlay': False, 'left': '1', 'right': '1', 'leftTransform': 'matrix(1, 0, 0, 1, 0, 0)', 'visible': True, 'pairsVisibility': 'visible'}
+onexcell mid {'route': 'onexcell', 'hold': True, 'reveal': False, 'overlay': True, 'left': '1', 'right': '1', 'leftTransform': 'none', 'visible': True, 'pairsVisibility': 'hidden'}
+onexcell after {'route': 'onexcell', 'hold': False, 'reveal': True, 'overlay': False, 'left': '0', 'right': '0', 'leftTransform': 'matrix(1, 0, 0, 1, 0, 32)', 'visible': True, 'pairsVisibility': 'visible'}
+onexcell settled {'route': 'onexcell', 'hold': False, 'reveal': True, 'overlay': False, 'left': '1', 'right': '1', 'leftTransform': 'matrix(1, 0, 0, 1, 0, 0)', 'visible': True, 'pairsVisibility': 'visible'}
+return PASS
+YOU no invented pairs PASS
+page errors []
+
+PASS JavaScript syntax (node --check).
+Test environment: Chromium with actual website source and assets via request-interception preview; localhost navigation blocked.

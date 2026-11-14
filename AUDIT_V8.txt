@@ -1,0 +1,21 @@
+MKA V11 / V8 — integration audit
+
+Verified in browser-rendered preview using the actual component HTML, original media bytes and user-gesture-required audio policy:
+- HOME dial plays the original Oh Lord by Foxy Shazam MP3; time advances.
+- No audio autoplay.
+- Global playback continues when opening Mixtape.
+- Mixtape play/pause and HOME dial stay synchronized.
+- Keyboard volume adjustment changes the shared volume.
+- Unavailable track rows no longer play the wrong recording.
+- All 12 main destinations switch successfully. No observed JS page errors during this run.
+
+Remaining unresolved (not silently replaced):
+- Other 47 Mixtape entries are preview metadata, not supplied distinct audio files; Spotify search is a fallback, not streaming integration.
+- Four metallic project buttons have standalone press animations but no verified destination mapping.
+- Six global appearance buttons have no verified behavior in the supplied implementation.
+- Contact cards and dot CTA have no verified contact destinations in source (dot CTA uses empty mailto).
+- OFF THE CLOCK remains disabled pending exact approved alternate copy and interaction.
+- Actual CV PDF, live 3D keychain runtime, full project content and metadata, final responsive mobile treatment still need verification/integration.
+- Original design files and About V11 source are unmodified.
+
+Test limitations: localhost navigation blocked in this environment. Preview uses the actual local files with in-memory routing, srcdoc for same-origin module documents, and original MP3 served through the test route. No physical speaker/audio output or user computer tested. This is a development build, not a verified production deployment.

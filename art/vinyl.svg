@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="108.711" height="108.711" viewBox="1329.99 736.576 108.711 108.711" fill="none"><g clip-path="url(#clip7_2710_50061)">
+<rect x="1329.99" y="736.576" width="108.711" height="108.711" rx="6.74781" fill="#181818"/>
+<circle cx="1428.64" cy="747.592" r="5.26793" fill="#252525"/>
+<circle cx="1428.88" cy="747.515" r="2.63397" fill="#676767"/>
+<circle cx="1428.64" cy="834.272" r="5.26793" fill="#252525"/>
+<circle cx="1341.96" cy="747.59" r="5.26793" fill="#252525"/>
+<circle cx="1342.2" cy="747.513" r="2.63397" fill="#676767"/>
+<circle cx="1384.34" cy="790.931" r="43.3407" fill="url(#paint115_linear_2710_50061)"/>
+<circle cx="1383.99" cy="790.574" r="34" fill="#2E2E2E"/>
+<circle cx="1384.3" cy="790.931" r="24.1846" fill="#FCDB23"/>
+<path d="M1378.86 838.82L1429.04 833.002L1429.31 835.274L1379.12 841.092L1378.86 841.831L1366.97 842.501L1366.71 840.23L1378.39 837.812L1378.86 838.82Z" fill="#D9D9D9"/>
+</g>
+<rect x="1330.27" y="736.857" width="108.149" height="108.149" rx="6.46665" stroke="#212121" stroke-width="0.562318"/>
+<defs><linearGradient id="paint115_linear_2710_50061" x1="1375.97" y1="754.377" x2="1367.48" y2="868.156" gradientUnits="userSpaceOnUse">
+<stop stop-color="#252525"/>
+<stop offset="1" stop-color="#434343"/>
+</linearGradient>
+<clipPath id="clip7_2710_50061">
+<rect x="1329.99" y="736.576" width="108.711" height="108.711" rx="6.74781" fill="white"/>
+</clipPath>
+</defs></svg>

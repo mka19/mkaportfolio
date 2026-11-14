@@ -1,0 +1,67 @@
+MKA cumulative V17 — browser preview regression
+
+GROUP MASCOT
+PASS group home
+PASS group projects
+PASS group about
+PASS group cv
+PASS group playground
+PASS group license
+PASS group tech
+PASS side freelance
+PASS side onji
+PASS side onexcell
+PASS side you
+PASS swatch no paw
+PASS metal and indicator
+PASS ticker head only
+PASS contact
+PASS exit
+errors [] missing []
+
+HOME BADGES / FOCUS / CV
+PASS headline toggle
+PASS synchronized badge switch and company hover pause
+PASS clock second hand
+PASS company badge routes to active entity
+PASS focus mode {'x': 9, 'y': 9, 'width': 1422, 'height': 882}
+PASS restore console
+CV initial bbox {'x': 568.15625, 'y': 537.03125, 'width': 527.171875, 'height': 9.84375}
+PASS CV immediately visible and moving after page transition
+errors [] missing []
+
+GENERAL REGRESSION
+PASS restored original dial no white ticks
+PASS cat and no hover scale home right
+PASS cat and no hover scale keyboard right
+PASS cat and no hover scale you left
+PASS cat and no hover scale freelance bottom
+PASS cat and no hover scale onji bottom
+PASS cat and no hover scale onexcell bottom
+PASS no swatch paw
+PASS native music playback {'playing': True, 'volume': 0.62, 'currentTime': 0.119002, 'duration': 250.586667, 'trackIndex': 0, 'title': 'Oh Lord', 'artist': 'Foxy Shazam', 'error': ''}
+PASS ticker motion
+PASS clock
+PASS fourth button Sextillion
+PASS license page
+flip matrix matrix3d(0.973654, 0, 0.228031, 0, -0.00462847, 0.999794, 0.0197628, 0, -0.227984, -0.0202976, 0.973453, 0, 0, -5.42754, 16.2826, 1)
+PASS freelance flip
+PASS card return
+PASS movies page
+movie rating 9.8/10 9.7/10
+PASS wheel
+movie gaps [8, 14]
+entrance during page False True
+PASS mixtape delayed entry and music persistence
+PASS Mixtape actual row play/pause
+PASS pause
+PASS permanent grid 208 5.65
+PASS cv page
+PASS autonomous CV crawl
+PASS keyboard page
+PASS active shader
+keyboard {'stage': {'x': 0, 'y': 0, 'width': 1602, 'height': 936, 'top': 0, 'right': 1602, 'bottom': 936, 'left': 0}, 'shader': {'x': 0, 'y': 0, 'width': 1602, 'height': 936, 'top': 0, 'right': 1602, 'bottom': 936, 'left': 0}, 'key': {'x': 549.765625, 'y': 367.0625, 'width': 127.4375, 'height': 145.015625, 'top': 367.0625, 'right': 677.203125, 'bottom': 512.078125, 'left': 549.765625}}
+errors [] missing []
+PASS mobile emulated tap
+
+Test environment: Chromium browser preview with actual local files served through a request-interception harness; 1440x900 desktop and mobile-emulated music tap. Not a test of the user’s physical device or local server.

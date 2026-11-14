@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Movie Scroll — Figma Design Recreation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&family=Zalando+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --ease: cubic-bezier(.22, 1, .36, 1); }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 100%; height: 100%; background: #09050b; overflow: hidden; }
+    body { font-family: "Zalando Sans", Arial, sans-serif; color: #fff; }
+    button { font: inherit; }
+    .viewport { position: relative; width: 100vw; height: 100dvh; overflow: hidden; display: grid; place-items: center; }
+    .artboard {
+      width: 1602px;
+      height: 710px;
+      position: absolute;
+      overflow: hidden;
+      border-radius: 12px;
+      background: #11070e;
+      transform-origin: center center;
+      outline: none;
+      user-select: none;
+      touch-action: none;
+      isolation: isolate;
+    }
+    .poster-layer {
+      position: absolute; inset: 0; z-index: -5; opacity: 0;
+      overflow: hidden;
+      transition: opacity 900ms ease;
+      pointer-events: none;
+    }
+    .poster-layer.visible { opacity: 1; }
+    .poster-layer img {
+      position: absolute;
+      width: 1068px;
+      height: 1602px;
+      object-fit: cover;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%) rotate(90deg) scale(1.025);
+      filter: saturate(1.02) contrast(1.04);
+    }
+    .poster-layer img.landscape {
+      inset: 0;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: none;
+    }
+    .darken {
+      position: absolute; inset: 0; z-index: -4;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.22), rgba(0,0,0,.08) 33%, rgba(0,0,0,.1) 65%, rgba(0,0,0,.28)),
+        rgba(0,0,0,.67);
+      pointer-events: none;
+    }
+    .edge-shade {
+      position: absolute; inset: 0; z-index: -3; pointer-events: none;
+      background: radial-gradient(ellipse 74% 92% at 50% 50%, transparent 45%, rgba(0,0,0,.24) 100%);
+    }
+    .left-block {
+      position: absolute;
+      left: 25px;
+      top: 305px;
+      width: 330px;
+      z-index: 4;
+      transition: opacity 270ms ease, transform 470ms var(--ease);
+    }
+    .title {
+      margin: 0;
+      width: 310px;
+      font-family: "Unbounded", sans-serif;
+      font-weight: 700;
+      font-size: 38.58px;
+      line-height: 1.23;
+      letter-spacing: -.06em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg, #fff 0%, #f5edf2 75%, #c6aab7 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-wrap: balance;
+    }
+    .tag-row { display: flex; gap: 4px; margin-top: 4px; width: max-content; }
+    .tag {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-height: 23px;
+      padding: 2px 8px;
+      border-radius: 269px;
+      border: 1px solid rgba(255,255,255,.20);
+      color: #fff;
+      background: linear-gradient(110deg, rgba(39,39,39,.34), rgba(255,255,255,.065));
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: -.06em;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .list-view {
+      position: absolute;
+      z-index: 5;
+      left: 681px;
+      top: 0;
+      width: 265px;
+      height: 710px;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
+      mask-image: linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
+    }
+    .movie-row {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 265px;
+      height: 29px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 0 0 0 0;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      color: #fff;
+      /* Both selected and unselected titles use a genuine clipped gradient,
+         matching the linear Figma fills instead of a flat white alpha. */
+      background-image: linear-gradient(100deg, var(--gradient-start, rgba(255,255,255,.35)), var(--gradient-end, rgba(255,255,255,.51)));
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-family: "Zalando Sans", Arial, sans-serif;
+      font-size: var(--size, 20px);
+      line-height: 1;
+      font-weight: 600;
+      letter-spacing: -.06em;
+      white-space: nowrap;
+      text-align: left;
+      opacity: var(--distance-fade, 1);
+      transform: translateY(calc(-50% + var(--offset, 0) * 28px));
+      transition:
+        transform 520ms var(--ease),
+        background-image 430ms ease,
+        font-size 500ms var(--ease),
+        opacity 470ms ease;
+      will-change: transform;
+      -webkit-font-smoothing: antialiased;
+    }
+    .movie-row.active {
+      --gradient-start: rgba(244,235,242,.94);
+      --gradient-end: rgba(255,255,255,1);
+      --size: 24px;
+      font-weight: 600;
+    }
+    .movie-row:not(.active):hover {
+      --gradient-start: rgba(255,255,255,.68);
+      --gradient-end: rgba(255,255,255,.82);
+    }
+    .movie-row:focus-visible { outline: 1px solid rgba(255,255,255,.8); outline-offset: -2px; }
+    .right-block {
+      z-index: 4;
+      position: absolute;
+      right: 26px;
+      top: 292px;
+      width: 344px;
+      text-align: right;
+      transition: opacity 270ms ease, transform 470ms var(--ease);
+    }
+    .rating {
+      font-family: "Unbounded", sans-serif;
+      font-weight: 700;
+      font-size: 38.58px;
+      letter-spacing: -.06em;
+      line-height: 1.25;
+      height: 48px;
+      margin-bottom: 8px;
+      color: #fff;
+      background: linear-gradient(112deg, #d1bdcb, #fff 52%, #fff);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    .description {
+      font-family: "Zalando Sans", Arial, sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 20px;
+      letter-spacing: -.06em;
+      margin: 0;
+      min-height: 40px;
+      color: #fff;
+    }
+    .watch-row { display: flex; justify-content: flex-end; margin-top: 14px; }
+    .watch {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 86px;
+      height: 33px;
+      border-radius: 66px;
+      padding: 6px 16px;
+      color: #fff;
+      font-family: "Zalando Sans", Arial, sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: -.06em;
+      text-decoration: none;
+      background: linear-gradient(118deg, rgba(22,22,22,.6), rgba(85,85,85,.20));
+      border: 1px solid rgba(255,255,255,.38);
+      cursor: pointer;
+      transition: background 250ms ease, border-color 250ms ease;
+    }
+    .watch:hover { background: linear-gradient(118deg, rgba(45,45,45,.78), rgba(100,100,100,.34)); border-color: rgba(255,255,255,.7); }
+    .watch:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+    .is-exiting { opacity: 0; transform: translateY(-10px); }
+    .is-entering { animation: enter 560ms var(--ease) both; }
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(13px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="viewport" id="viewport">
+    <main class="artboard" id="artboard" tabindex="0" aria-label="Interactive movie selection. Scroll or swipe to change movie.">
+      <div class="poster-layer visible" id="posterA" aria-hidden="true"><img alt="" src="movie-assets/color-out-of-space.jpg"></div>
+      <div class="poster-layer" id="posterB" aria-hidden="true"><img alt=""></div>
+      <div class="darken" aria-hidden="true"></div>
+      <div class="edge-shade" aria-hidden="true"></div>
+      <section class="left-block" id="leftBlock" aria-label="Selected film">
+        <h1 class="title" id="movieTitle">COLOR OUT<br>OF SPACE</h1>
+        <div class="tag-row" id="tagRow">
+          <span class="tag">2019</span><span class="tag">Sci-Fi / Horror</span><span class="tag">1h 51m</span>
+        </div>
+      </section>
+      <nav class="list-view" id="listView" aria-label="Choose movie"></nav>
+      <aside class="right-block" id="rightBlock" aria-label="My rating and description">
+        <div class="rating" id="movieRating">9.8/10</div>
+        <p class="description" id="movieDescription">Absolute masterpiece. Came for space. Left<br>questioning time, love, and my existence.</p>
+        <div class="watch-row"><a class="watch" id="watchLink" href="#" target="_blank" rel="noopener noreferrer">WATCH</a></div>
+      </aside>
+    </main>
+  </div>
+  <script>
+    // Demo content only. Replace this array with your own favourites later.
+    const MOVIES = [
+      { menu:'COLOUR OUT OF SPACE', title:'COLOR OUT\nOF SPACE', year:'2019', genre:'Sci-Fi / Horror', runtime:'1h 51m', rating:9.8, review:'Absolute masterpiece. Came for space. Left questioning time, love, and my existence.', poster:'movie-assets/color-out-of-space.jpg', landscape:false, search:'Color Out of Space 2019 trailer' },
+      { menu:'INTERSTELLAR', title:'INTERSTELLAR', year:'2014', genre:'Sci-Fi / Drama', runtime:'2h 49m', rating:9.7, review:'A reminder that space is enormous, time is unfair, and I am definitely going to cry again.', poster:'movie-assets/interstellar.jpg', landscape:true, search:'Interstellar 2014 trailer' },
+      { menu:'WHIPLASH', title:'WHIPLASH', year:'2014', genre:'Drama / Music', runtime:'1h 47m', rating:9.6, review:'I have never been this stressed by jazz. That final scene is everything.', poster:'movie-assets/whiplash.jpg', landscape:true, search:'Whiplash 2014 trailer' },
+      { menu:'PARASITE', title:'PARASITE', year:'2019', genre:'Thriller / Drama', runtime:'2h 12m', rating:9.7, review:'Every frame matters. Every staircase has something to say.', poster:'movie-assets/parasite.jpg', landscape:true, search:'Parasite 2019 trailer' },
+      { menu:'INCEPTION', title:'INCEPTION', year:'2010', genre:'Sci-Fi / Thriller', runtime:'2h 28m', rating:9.5, review:'Still thinking about that spinning top. I think I understood it. Probably.', poster:'movie-assets/inception.jpg', landscape:true, search:'Inception 2010 trailer' },
+      { menu:'THE BATMAN', title:'THE BATMAN', year:'2022', genre:'Crime / Thriller', runtime:'2h 56m', rating:9.2, review:'Rain, shadows, detective work, and the moodiest Gotham I have ever seen.', poster:'movie-assets/the-batman.jpg', landscape:true, search:'The Batman 2022 trailer' },
+      { menu:'DUNE: PART TWO', title:'DUNE:\nPART TWO', year:'2024', genre:'Sci-Fi / Epic', runtime:'2h 46m', rating:9.4, review:'The visuals, the sound, the sheer scale. This belongs on the biggest screen.', poster:'movie-assets/dune-part-two.jpg', landscape:true, search:'Dune Part Two 2024 trailer' },
+      { menu:'FIGHT CLUB', title:'FIGHT CLUB', year:'1999', genre:'Drama / Thriller', runtime:'2h 19m', rating:9.3, review:'The first rule? Watch it without spoilers. The second rule? Watch it again.', poster:'movie-assets/fight-club.jpg', landscape:true, search:'Fight Club 1999 trailer' }
+    ];
+    const $ = id => document.getElementById(id);
+    const board = $('artboard');
+    const layers = [$('posterA'), $('posterB')];
+    const listView = $('listView');
+    const ROW_STEP = 28;
+    const VISIBLE_RADIUS = 15;
+    const ROW_COUNT = VISIBLE_RADIUS * 2 + 1;
+    const MOD = n => (n % MOVIES.length + MOVIES.length) % MOVIES.length;
+    let selected = 0;
+    let imageLayer = 0;
+    let moving = false;
+    let wheelAccumulator = 0;
+    let wheelGestureLocked = false;
+    let wheelReleaseTimer = null;
+    let lastWheelSelection = -Infinity;
+    let touchStartY = null;
+    let pointerStartY = null;
+    let suppressClickUntil = 0;
+    let currentDisplayRating = MOVIES[0].rating;
+    let ratingRaf = null;
+    let copyTimer = null;
+    let posterRequest = 0;
+    const rows = [];
+
+    function scaleToViewport() {
+      const s = Math.min(innerWidth / 1602, innerHeight / 710);
+      board.style.transform = 'scale(' + s + ')';
+    }
+    addEventListener('resize', scaleToViewport, {passive:true});
+    scaleToViewport();
+
+    function getFilm(offset) { return MOVIES[MOD(selected + offset)]; }
+    function displayRow(row, offset, instantaneous=false) {
+      if (instantaneous) row.style.transition = 'none';
+      row.dataset.offset = String(offset);
+      row.style.setProperty('--offset', offset);
+      row.classList.toggle('active', offset === 0);
+      row.style.setProperty('--distance-fade', String(Math.max(.12, 1 - Math.max(0, Math.abs(offset) - 7) * .09)));
+      row.style.setProperty('--alpha', offset === 0 ? '1' : '.46');
+      row.style.setProperty('--size', offset === 0 ? '24px' : '20px');
+      row.setAttribute('aria-current', offset === 0 ? 'true' : 'false');
+      row.textContent = getFilm(offset).menu;
+      if (instantaneous) requestAnimationFrame(() => { row.style.transition = ''; });
+    }
+    for (let offset=-VISIBLE_RADIUS; offset<=VISIBLE_RADIUS; offset++) {
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'movie-row';
+      row.addEventListener('click', () => {
+        if(performance.now() < suppressClickUntil) return;
+        const distance = Number(row.dataset.offset || 0);
+        if (distance !== 0) navigate(distance);
+      });
+      listView.appendChild(row);
+      rows.push(row);
+      displayRow(row, offset, true);
+    }
+
+    function updatePoster(film) {
+      const request = ++posterRequest;
+      const next = imageLayer === 0 ? 1 : 0;
+      const img = layers[next].querySelector('img');
+      const upcoming = new Image();
+      upcoming.decoding = 'async';
+      const showReadyPoster = () => {
+        if (request !== posterRequest || imageLayer === next) return;
+        img.src = film.poster;
+        img.classList.toggle('landscape', Boolean(film.landscape));
+        layers[next].classList.add('visible');
+        layers[imageLayer].classList.remove('visible');
+        imageLayer = next;
+      };
+      upcoming.onload = showReadyPoster;
+      upcoming.onerror = () => {
+        // Keep the previous artwork visible if this poster is unavailable.
+        if (request === posterRequest) console.warn('Movie poster unavailable:', film.menu);
+      };
+      upcoming.src = film.poster;
+      if (upcoming.complete && upcoming.naturalWidth) showReadyPoster();
+    }
+    function animateNumber(target) {
+      if (ratingRaf) cancelAnimationFrame(ratingRaf);
+      const from = currentDisplayRating;
+      const start = performance.now();
+      const duration = 650;
+      const tick = now => {
+        const p = Math.min(1, (now-start)/duration);
+        const eased = 1-Math.pow(1-p,3);
+        currentDisplayRating = from + (target-from)*eased;
+        $('movieRating').textContent = currentDisplayRating.toFixed(1)+'/10';
+        if (p < 1) ratingRaf = requestAnimationFrame(tick);
+      };
+      ratingRaf = requestAnimationFrame(tick);
+    }
+    function updateCopy(film) {
+      const blocks = [$('leftBlock'), $('rightBlock')];
+      for (const b of blocks) { b.classList.remove('is-entering'); b.classList.add('is-exiting'); }
+      if (copyTimer) clearTimeout(copyTimer);
+      copyTimer = setTimeout(() => {
+        $('movieTitle').innerHTML = film.title.split('\n').map(x => x.replaceAll('&','&amp;').replaceAll('<','&lt;')).join('<br>');
+        $('tagRow').innerHTML = [film.year, film.genre, film.runtime].map(x => '<span class="tag">'+x+'</span>').join('');
+        $('movieDescription').textContent = film.review;
+        $('watchLink').href = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(film.search);
+        for (const b of blocks) {
+          b.classList.remove('is-exiting');
+          void b.offsetWidth;
+          b.classList.add('is-entering');
+        }
+      }, 190);
+      animateNumber(film.rating);
+    }
+
+    function navigate(delta) {
+      // No backlog: one gesture = one deliberate transition. The old queue
+      // kept animating after the user stopped scrolling.
+      if (moving || !delta) return;
+      moving = true;
+      const direction = Math.max(-VISIBLE_RADIUS, Math.min(VISIBLE_RADIUS, delta));
+      selected = MOD(selected + direction);
+      const film = MOVIES[selected];
+      for (const row of rows) {
+        const newOffset = Number(row.dataset.offset) - direction;
+        row.dataset.offset = String(newOffset);
+        row.style.setProperty('--offset', newOffset);
+        row.classList.toggle('active', newOffset === 0);
+        row.style.setProperty('--distance-fade', String(Math.max(.12,1-Math.max(0, Math.abs(newOffset)-7)*.09)));
+        row.style.setProperty('--alpha', newOffset === 0 ? '1' : '.46');
+        row.style.setProperty('--size', newOffset === 0 ? '24px' : '20px');
+        row.setAttribute('aria-current', newOffset === 0 ? 'true' : 'false');
+      }
+      updatePoster(film);
+      updateCopy(film);
+      setTimeout(() => {
+        for (const row of rows) {
+          const offset = Number(row.dataset.offset);
+          if (offset < -VISIBLE_RADIUS) displayRow(row, offset+ROW_COUNT, true);
+          if (offset > VISIBLE_RADIUS) displayRow(row, offset-ROW_COUNT, true);
+        }
+        moving = false;
+      }, 540);
+    }
+
+    board.addEventListener('wheel', e => {
+      if (e.ctrlKey || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      e.preventDefault();
+      const normalized = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? board.clientHeight : 1);
+      // Ignore tiny inertial tail events; allow fresh gestures and deliberate
+      // sustained scrolling. No delayed/queued selection after input stops.
+      clearTimeout(wheelReleaseTimer);
+      wheelReleaseTimer = setTimeout(() => { wheelAccumulator = 0; wheelGestureLocked = false; }, 160);
+      if (Math.abs(normalized) < 2) return;
+      if (moving) { wheelAccumulator = 0; return; }
+      if (wheelAccumulator && Math.sign(wheelAccumulator) !== Math.sign(normalized)) wheelAccumulator = 0;
+      wheelAccumulator += normalized;
+      const now = performance.now();
+      if (Math.abs(wheelAccumulator) >= 24 && now-lastWheelSelection >= 540) {
+        const direction = Math.sign(wheelAccumulator);
+        wheelAccumulator = 0;
+        lastWheelSelection = now;
+        navigate(direction);
+      }
+    }, {passive:false});
+    board.addEventListener('keydown', e => {
+      if (e.key==='ArrowDown' || e.key==='ArrowRight') { e.preventDefault(); navigate(1); }
+      else if(e.key==='ArrowUp' || e.key==='ArrowLeft') { e.preventDefault(); navigate(-1); }
+    });
+    board.addEventListener('touchstart', e => { touchStartY=e.touches[0].clientY; },{passive:true});
+    board.addEventListener('touchend', e => {
+      if(touchStartY===null) return;
+      const delta=touchStartY-e.changedTouches[0].clientY;
+      if(Math.abs(delta)>25) navigate(Math.sign(delta));
+      touchStartY=null;
+    },{passive:true});
+    listView.addEventListener('pointerdown', e => { if(e.pointerType!=='touch') pointerStartY=e.clientY; });
+    listView.addEventListener('pointerup', e => {
+      if(pointerStartY===null) return;
+      const delta=pointerStartY-e.clientY;
+      if(Math.abs(delta)>25) { suppressClickUntil=performance.now()+300; navigate(Math.sign(delta)); }
+      pointerStartY=null;
+    });
+    $('watchLink').href = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(MOVIES[0].search);
+    for (const movie of MOVIES) { const img = new Image(); img.src=movie.poster; }
+  </script>
+</body>
+</html>
