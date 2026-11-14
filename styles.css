@@ -446,6 +446,8 @@ html:not([data-unbounded="ready"]) .project-label-wrap .project-label-art{conten
 .filters::before{left:0!important;top:4px!important;bottom:4px!important;width:var(--filter-pill-width)!important;transform:translateX(var(--filter-pill-x))!important;background:linear-gradient(180deg,rgba(26,26,26,.78),rgba(128,128,128,.52))!important;border:1px solid rgba(255,255,255,.28)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important}
 .filters::before{display:none!important}
 .filters button[aria-pressed=true]{background:linear-gradient(180deg,rgba(26,26,26,.78),rgba(128,128,128,.52))!important;border:1px solid rgba(255,255,255,.28)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important}
+.project-view.all-reference .filters button{color:#fff!important}
+.project-view.all-reference .filters button[aria-pressed=true]{background:linear-gradient(180deg,rgba(26,26,26,.78),rgba(128,128,128,.52))!important;border:1px solid rgba(255,255,255,.28)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important}
 
 /* The Projects route uses the entire existing stage; no added side gutters. */
 .project-view{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;background:transparent!important}
