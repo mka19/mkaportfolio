@@ -104,8 +104,8 @@ async function flipLicense(next){
  const front=new Image(),back=new Image();front.className='license-flip-face';back.className='license-flip-face license-flip-back';front.src=source.src;front.style.filter=getComputedStyle(source).filter;
  // Prepare the actual destination face before turning; no blank image at the midpoint.
  const destination=cardSource(next.route);back.src=next.route==='license'?`art/license-${state.licenseTheme}.png`:`art/entity-${next.route}.png`;
- if(next.route!=='license')back.style.filter='drop-shadow(0 0 9px #80c5ff66)';
- else back.style.filter=state.licenseTheme==='white'?'drop-shadow(0 0 9px #ffffff88)':state.licenseTheme==='red'?'drop-shadow(0 0 8px #d53b3355)':'drop-shadow(0 0 9px #80c5ff66)';
+ if(next.route!=='license')back.style.filter='drop-shadow(0 0 4px #80c5ff2b)';
+ else back.style.filter=state.licenseTheme==='white'?'drop-shadow(0 0 4px #ffffff38)':state.licenseTheme==='red'?'drop-shadow(0 0 4px #d53b332b)':'drop-shadow(0 0 4px #80c5ff2b)';
  body.append(front,back);ghost.append(body);stage.append(ghost);stage.setAttribute('aria-busy','true');source.style.visibility='hidden';
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;let active,mid,revealed=false;
  // Keep project artwork hidden during the entire flip, including the midpoint route commit.
@@ -329,7 +329,7 @@ addEventListener('message',async e=>{const f=$('#home-keychain');if(e.source!==f
  const ghost=new Image();ghost.src=`art/license-${state.licenseTheme}.png`;ghost.className='charm-detach';ghost.alt='';st.append(ghost);charmFlight=ghost;const control=$('#bottom-console [data-route="license"]');
  const card=$('#license-card');const sw=st.clientWidth,sh=st.clientHeight,sc=Math.min(1,sh/710);const tw=626*sc,th=375*sc,tx=(sw-tw)/2,ty=(sh-th)/2;
  Object.assign(ghost.style,{left:tx+'px',top:ty+'px',width:tw+'px',height:th+'px'});stageMotion.running=true;st.setAttribute('aria-busy','true');
- try{await ghost.decode().catch(()=>{});const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;const ox=x-tx,oy=y-ty,sx=w/tw,sy=h/th;const a=ghost.animate([{transform:`translate3d(${ox}px,${oy}px,0) scale(${sx},${sy})`,filter:'drop-shadow(0 2px 3px #0005)'},{transform:`translate3d(${ox*.8}px,${oy*.88-24}px,0) scale(${Math.min(1,sx*1.12)},${Math.min(1,sy*1.12)})`,offset:.22,filter:'drop-shadow(0 12px 14px #0005)'},{transform:'translate3d(0,0,0) scale(1,1)',filter:'drop-shadow(0 0 7px #80c5ff4d)'}],{duration:reduced?1:1000,easing:'cubic-bezier(.22,.75,.22,1)',fill:'both'});await a.finished;commitRoute('license');control?.classList.add('charm-route-highlight');setTimeout(()=>control?.classList.remove('charm-route-highlight'),900);a.cancel();}finally{ghost.remove();charmFlight=null;stageMotion.running=false;st.removeAttribute('aria-busy');try{f.contentWindow?.postMessage({type:'mka:restore-charm'},'*')}catch{}if(stageMotion.pending)void drainStageMotion();}
+ try{await ghost.decode().catch(()=>{});const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;const ox=x-tx,oy=y-ty,sx=w/tw,sy=h/th;const a=ghost.animate([{transform:`translate3d(${ox}px,${oy}px,0) scale(${sx},${sy})`},{transform:`translate3d(${ox*.8}px,${oy*.88-24}px,0) scale(${Math.min(1,sx*1.12)},${Math.min(1,sy*1.12)})`,offset:.22},{transform:'translate3d(0,0,0) scale(1,1)'}],{duration:reduced?1:1000,easing:'cubic-bezier(.22,.75,.22,1)',fill:'both'});await a.finished;commitRoute('license');control?.classList.add('charm-route-highlight');setTimeout(()=>control?.classList.remove('charm-route-highlight'),900);a.cancel();}finally{ghost.remove();charmFlight=null;stageMotion.running=false;st.removeAttribute('aria-busy');try{f.contentWindow?.postMessage({type:'mka:restore-charm'},'*')}catch{}if(stageMotion.pending)void drainStageMotion();}
 });
 
 // Keep live Unbounded when loaded; original Figma lettering is the offline fallback.

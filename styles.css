@@ -357,8 +357,10 @@ iframe[title="Original metallic controls"],iframe[title="Original animated conta
 #license-card,#entity-card,#license-stickers,#entity-return{animation:license-float 5.8s ease-in-out infinite;}
 @keyframes license-float{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-8px,0)}}
 #stage[aria-busy=true] #license-card,#stage[aria-busy=true] #entity-card,#stage[aria-busy=true] #license-stickers,#stage[aria-busy=true] #entity-return{animation-play-state:paused}
-#entity-card[data-theme="white"]{filter:grayscale(1) brightness(1.16) drop-shadow(0 0 10px #ffffff66)!important}#entity-card[data-theme="red"]{filter:hue-rotate(150deg) saturate(1.05) drop-shadow(0 0 10px #d53b3366)!important}#entity-card[data-theme="cyan"]{filter:drop-shadow(0 0 9px #80c5ff66)!important}
-.charm-detach{position:absolute;z-index:101;pointer-events:none;transform-origin:top left;object-fit:fill;border-radius:12px;will-change:transform;}
+#license-card{filter:drop-shadow(0 0 4px #80c5ff2b)!important}
+#license-card[src*="white"]{filter:drop-shadow(0 0 4px #ffffff38)!important}#license-card[src*="red"]{filter:drop-shadow(0 0 4px #d53b332b)!important}
+#entity-card[data-theme="white"]{filter:grayscale(1) brightness(1.16) drop-shadow(0 0 4px #ffffff38)!important}#entity-card[data-theme="red"]{filter:hue-rotate(150deg) saturate(1.05) drop-shadow(0 0 4px #d53b332b)!important}#entity-card[data-theme="cyan"]{filter:drop-shadow(0 0 4px #80c5ff2b)!important}
+.charm-detach{position:absolute;z-index:101;pointer-events:none;transform-origin:top left;object-fit:fill;border-radius:12px;will-change:transform;box-shadow:0 5px 16px #0004,0 0 6px #80c5ff1f;image-rendering:auto;}
 .control.charm-route-highlight{box-shadow:none!important;filter:brightness(1.06)!important;transition:filter 320ms ease;}
 /* Never scale or blank the controls on hover. Keep their original resting images. */
 .art-button[data-hover-video] img{opacity:1!important;visibility:visible!important;display:block!important;}
