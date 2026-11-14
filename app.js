@@ -5,6 +5,14 @@ const projects=[{id:'solitaire',name:'Solitaire Prime',category:'web',categoryLa
 const routes={about:'about',gallery:'gallery',keyboard:'keyboard',cv:'cv',mixtape:'mixtape',movies:'movies'};
 const entities=['freelance','onexcell','onji','you'];
 const views=new Map($$('[data-view]').map(el=>[el.dataset.view,el]));const frames=new Map();
+let buttonAudioContext;
+function playButtonClick(){
+ const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
+ try{buttonAudioContext=buttonAudioContext||new Ctx();if(buttonAudioContext.state==='suspended')buttonAudioContext.resume();const t=buttonAudioContext.currentTime,duration=.045,len=Math.floor(buttonAudioContext.sampleRate*duration),buffer=buttonAudioContext.createBuffer(1,len,buttonAudioContext.sampleRate),samples=buffer.getChannelData(0);for(let i=0;i<len;i++)samples[i]=(Math.random()*2-1)*Math.exp(-i/(buttonAudioContext.sampleRate*.006));const noise=buttonAudioContext.createBufferSource();noise.buffer=buffer;const filter=buttonAudioContext.createBiquadFilter();filter.type='bandpass';filter.frequency.value=1500;filter.Q.value=.62;const sharp=buttonAudioContext.createGain();sharp.gain.setValueAtTime(.11,t);sharp.gain.exponentialRampToValueAtTime(.001,t+.034);noise.connect(filter).connect(sharp).connect(buttonAudioContext.destination);noise.start(t);noise.stop(t+duration);const tone=buttonAudioContext.createOscillator();tone.type='sine';tone.frequency.setValueAtTime(185,t);tone.frequency.exponentialRampToValueAtTime(86,t+.058);const low=buttonAudioContext.createGain();low.gain.setValueAtTime(.001,t);low.gain.linearRampToValueAtTime(.09,t+.003);low.gain.exponentialRampToValueAtTime(.001,t+.073);tone.connect(low).connect(buttonAudioContext.destination);tone.start(t);tone.stop(t+.077);}catch{}
+}
+const soundDocuments=new WeakSet();
+function installButtonSounds(doc){if(!doc||soundDocuments.has(doc))return;soundDocuments.add(doc);doc.addEventListener('pointerdown',e=>{if(e.button===0&&e.target.closest?.('button:not(:disabled)'))playButtonClick()});doc.addEventListener('keydown',e=>{if(!e.repeat&&(e.key===' '||e.key==='Enter')&&e.target.closest?.('button:not(:disabled)'))playButtonClick()});}
+installButtonSounds(document);
 addEventListener('message',e=>{const frame=frames.get('about')?.querySelector('iframe');if(frame&&e.source===frame.contentWindow&&e.data?.type==='mka:about-ready')frame.dataset.hostReady='true'});
 // Grid center handles centering at natural dimensions; explicit margins are unnecessary.
 function fit(){
@@ -29,7 +37,7 @@ function getRuntime(route){if(frames.has(route))return frames.get(route);const w
 // Same-origin module integration boundary: preserve runtime and make the outer surface fit.
 function configureModule(f,route){
  try{
- const doc=f.contentDocument;if(!doc||!doc.body||doc.querySelector('#mka-stage-integration'))return;if(route==='about'&&!doc.querySelector('#canvas'))return;
+ const doc=f.contentDocument;if(!doc||!doc.body)return;installButtonSounds(doc);if(doc.querySelector('#mka-stage-integration'))return;if(route==='about'&&!doc.querySelector('#canvas'))return;
  const style=doc.createElement('style');style.id='mka-stage-integration';
  const common=`html,body{margin:0!important;padding:0!important;scrollbar-width:none!important;overscroll-behavior:none}*{scrollbar-width:none!important}*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}`;
  const extras={
@@ -164,8 +172,13 @@ setFilter=function(f){$('.project-view').classList.toggle('all-reference',f==='a
 const timeFmt=new Intl.DateTimeFormat(undefined,{hour:'2-digit',minute:'2-digit',hourCycle:'h23'}),dateFmt=new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric'}),dayFmt=new Intl.DateTimeFormat('en-US',{weekday:'long'});
 function tick(){const d=new Date(),m=d.getMinutes()+d.getSeconds()/60,h=d.getHours()%12+m/60;$('.clock-hand-hour').style.transform=`translateX(-50%) rotate(${h*30}deg)`;$('.clock-hand-minute').style.transform=`translateX(-50%) rotate(${m*6}deg)`;$('.clock-hand-second').style.transform=`translateX(-50%) rotate(${d.getSeconds()*6}deg)`;$('#clock-time').textContent=timeFmt.format(d);$('#clock-date').textContent=dateFmt.format(d);$('#clock-day').textContent=dayFmt.format(d);$('#clock-time').dateTime=d.toISOString();}
 tick();setInterval(tick,1000);setFilter('best');routeTo(location.hash.slice(1)||'home',undefined,false);
-// Warm the heaviest existing section after Home has settled so its first reveal is immediate.
-if((location.hash.slice(1)||'home')!=='about')setTimeout(()=>getRuntime('about'),700);
+// Warm heavy existing sections after Home has settled so their first reveal is immediate.
+if((location.hash.slice(1)||'home')!=='about')setTimeout(()=>getRuntime('about'),2200);
+const techControl=$('[data-route="keyboard"]');
+const warmTech=()=>getRuntime('keyboard');
+techControl?.addEventListener('pointerenter',warmTech,{once:true,passive:true});
+techControl?.addEventListener('focus',warmTech,{once:true,passive:true});
+if((location.hash.slice(1)||'home')!=='keyboard')setTimeout(warmTech,500);
 
 
 // V19: the original fourth metal button sends its own activation; no dependence on mascot initialization.
