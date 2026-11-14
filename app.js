@@ -13,7 +13,7 @@ function playButtonClick(){
 const soundDocuments=new WeakSet();
 function installButtonSounds(doc){if(!doc||soundDocuments.has(doc))return;soundDocuments.add(doc);doc.addEventListener('pointerdown',e=>{if(e.button===0&&e.target.closest?.('button:not(:disabled)'))playButtonClick()});doc.addEventListener('keydown',e=>{if(!e.repeat&&(e.key===' '||e.key==='Enter')&&e.target.closest?.('button:not(:disabled)'))playButtonClick()});}
 installButtonSounds(document);
-addEventListener('message',e=>{const frame=frames.get('about')?.querySelector('iframe');if(frame&&e.source===frame.contentWindow&&e.data?.type==='mka:about-ready')frame.dataset.hostReady='true'});
+addEventListener('message',e=>{const frame=frames.get('about')?.querySelector('iframe');if(frame&&e.source===frame.contentWindow&&e.data?.type==='mka:about-ready'){frame.dataset.hostReady='true';frame.dispatchEvent(new Event('mka:host-ready'));}});
 // Grid center handles centering at natural dimensions; explicit margins are unnecessary.
 function fit(){
   const width=innerWidth, height=innerHeight;
@@ -73,10 +73,13 @@ const afterPaint=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnima
 function normalizedRoute(route){return views.has(route)||routes[route]||entities.includes(route)?route:'home';}
 async function ensureDestinationReady(route){
  const f=frames.has(route)?$('iframe',frames.get(route)):null;
- if(f&&!f.dataset.mkaReady){
+ const ready=()=>route==='about'?f?.dataset.hostReady==='true':f?.dataset.mkaReady==='true';
+ if(f&&!ready()){
   // Bound first-load wait: never leave the console covered indefinitely.
-  let onLoad;const loaded=new Promise(resolve=>{onLoad=resolve;f.addEventListener('load',onLoad,{once:true});});
-  try{await Promise.race([loaded,wait(160)]);}finally{f.removeEventListener('load',onLoad);}
+  const eventName=route==='about'?'mka:host-ready':'load';
+  let onReady;const loaded=new Promise(resolve=>{onReady=resolve;f.addEventListener(eventName,onReady,{once:true});});
+  const timeout=route==='about'?4500:800;
+  try{await Promise.race([loaded,wait(timeout)]);}finally{f.removeEventListener(eventName,onReady);}
  }
  await afterPaint();
 }
