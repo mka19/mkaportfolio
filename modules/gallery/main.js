@@ -11,7 +11,7 @@ const SOURCE_IMAGES = [
   ["25.png",822,1027],
 ];
 const CFG = Object.freeze({
-  width:250, gapX:58, gapY:54, columns:6, overscan:48,
+  width:250, gapX:58, gapY:54, columns:6, overscan:120,
   followMs:38, momentumDamping:.93,
 });
 const viewport=document.getElementById("infinite-gallery");
@@ -45,6 +45,8 @@ let size={width:1602,height:710};
 let lastFrame=performance.now();
 let dragging=false;
 let lastCardX=Infinity,lastCardY=Infinity,cardsDirty=true;
+let framePending=false;
+let active=true;
 const mod=(n,m)=>((n%m)+m)%m;
 
 function createCard(card,x,y){
@@ -57,7 +59,9 @@ function createCard(card,x,y){
   const image=document.createElement("img");
   image.src=card.src;
   image.alt=`Portfolio artwork ${card.id+1}`;
-  image.loading="lazy";
+  // Every mounted card is inside the viewport or its small movement buffer.
+  // Eager loading avoids the visible lazy-load pop when the gallery first opens.
+  image.loading="eager";
   image.decoding="async";
   image.draggable=false;
   el.appendChild(image);
@@ -72,6 +76,7 @@ function updateCards(){
   const firstCol=Math.floor(left/stride)-1;
   const lastCol=Math.ceil(right/stride)+1;
   const needed=new Set();
+  const additions=document.createDocumentFragment();
 
   for(let colNum=firstCol;colNum<=lastCol;colNum++){
     const col=columns[mod(colNum,CFG.columns)];
@@ -88,12 +93,13 @@ function updateCards(){
         needed.add(key);
         if(!mounted.has(key)){
           const node=createCard(card,x,y);
-          world.appendChild(node);
+          additions.appendChild(node);
           mounted.set(key,node);
         }
       }
     }
   }
+  world.appendChild(additions);
   for(const [key,node] of mounted){
     if(!needed.has(key)){
       node.remove();
@@ -106,6 +112,8 @@ function updateCards(){
 }
 
 function animate(now){
+  framePending=false;
+  if(!active)return;
   const dt=Math.min(42,Math.max(1,now-lastFrame));
   lastFrame=now;
   if(!dragging&&!reducedMotion.matches){
@@ -128,7 +136,14 @@ function animate(now){
     target.x-=shift;
   }
   world.style.transform=`translate3d(${camera.x}px,${camera.y}px,0)`;
-  if(cardsDirty||Math.abs(camera.x-lastCardX)>36||Math.abs(camera.y-lastCardY)>36)updateCards();
+  if(cardsDirty||Math.abs(camera.x-lastCardX)>96||Math.abs(camera.y-lastCardY)>96)updateCards();
+  const settling=Math.abs(target.x-camera.x)>.05||Math.abs(target.y-camera.y)>.05;
+  if(dragging||velocity.x||velocity.y||settling)scheduleFrame();
+}
+
+function scheduleFrame(){
+  if(framePending||!active)return;
+  framePending=true;
   requestAnimationFrame(animate);
 }
 
@@ -145,6 +160,7 @@ viewport.addEventListener("pointerdown",event=>{
   drag.moved=false;
   viewport.classList.add("is-dragging");
   viewport.setPointerCapture(event.pointerId);
+  scheduleFrame();
 });
 viewport.addEventListener("pointermove",event=>{
   if(event.pointerId!==drag.pointerId)return;
@@ -161,6 +177,7 @@ viewport.addEventListener("pointermove",event=>{
   drag.time=now;
   drag.moved=drag.moved||Math.abs(dx)+Math.abs(dy)>0;
   event.preventDefault();
+  scheduleFrame();
 });
 function release(event){
   if(event.pointerId!==drag.pointerId)return;
@@ -170,6 +187,7 @@ function release(event){
   dragging=false;
   viewport.classList.remove("is-dragging");
   if(!coast||performance.now()-drag.time>110)stopMomentum();
+  scheduleFrame();
 }
 viewport.addEventListener("pointerup",release);
 viewport.addEventListener("pointercancel",release);
@@ -181,6 +199,7 @@ viewport.addEventListener("wheel",event=>{
   const unit=event.deltaMode===1?16:event.deltaMode===2?size.height:1;
   target.x-=(event.shiftKey&&!event.deltaX?event.deltaY:event.deltaX)*unit;
   target.y-=(event.shiftKey&&!event.deltaX?0:event.deltaY)*unit;
+  scheduleFrame();
 },{passive:false});
 
 viewport.addEventListener("keydown",event=>{
@@ -190,18 +209,32 @@ viewport.addEventListener("keydown",event=>{
     stopMomentum();
     target.x+=moves[event.key][0];
     target.y+=moves[event.key][1];
+    scheduleFrame();
   }else if(event.key==="Home"){
     event.preventDefault();
     stopMomentum();
     target.x=-165;
     target.y=-112;
+    scheduleFrame();
   }
 });
 const observer=new ResizeObserver(()=>{
   const rect=viewport.getBoundingClientRect();
   size={width:Math.max(1,rect.width),height:Math.max(1,rect.height)};
   cardsDirty=true;
+  scheduleFrame();
 });
 observer.observe(viewport);
 size={width:viewport.clientWidth||1602,height:viewport.clientHeight||710};
-requestAnimationFrame(animate);
+addEventListener("message",event=>{
+  if(event.data?.type!=="mka:runtime"||event.data.action!=="active")return;
+  active=event.data.value!==false;
+  lastFrame=performance.now();
+  if(active){cardsDirty=true;scheduleFrame();}
+});
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){framePending=false;return;}
+  lastFrame=performance.now();
+  scheduleFrame();
+});
+scheduleFrame();
