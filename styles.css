@@ -464,6 +464,9 @@ html:not([data-unbounded="ready"]) .project-label-wrap .project-label-art{conten
  #mobile-shell[hidden]{display:none!important}
  .mobile-frame{position:absolute;left:50%;top:50%;width:390px;height:844px;transform:translate(-50%,-50%) scale(var(--mobile-scale,1));transform-origin:center;background:#111;overflow:hidden}
  .mobile-art{position:absolute;inset:0;width:390px;height:844px;display:block;object-fit:contain;user-select:none;-webkit-user-drag:none}
+ .mobile-live-keychain{position:absolute;left:52px;top:8px;width:286px;height:236px;border:0;background:#111;color-scheme:dark;z-index:1;overflow:hidden}
+ #mobile-shell[data-expanded="true"] .mobile-live-keychain{display:none}
+ .mobile-live-keychain[hidden]{display:none!important}
  .mobile-hit{position:absolute;z-index:2;padding:0;border:0;background:transparent;color:transparent;box-shadow:none;touch-action:manipulation}
  .mobile-hit:focus-visible{outline:1px solid rgba(255,255,255,.72);outline-offset:-2px}
  .mobile-toggle{left:330px;top:12px;width:52px;height:52px}

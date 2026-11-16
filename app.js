@@ -356,15 +356,17 @@ if(document.fonts){document.fonts.load('500 34px Unbounded').then(faces=>{if(fac
  const shell=document.createElement('section');shell.id='mobile-shell';shell.hidden=true;shell.setAttribute('aria-label','MKA mobile portfolio');
  const frame=document.createElement('div');frame.className='mobile-frame';
  const art=document.createElement('img');art.className='mobile-art';art.alt='';art.decoding='async';
+ const liveKeychain=document.createElement('iframe');liveKeychain.className='mobile-live-keychain';liveKeychain.title='Interactive mobile WebGL keychain';liveKeychain.src='modules/keychain/index.html?v=28&mobile=1';liveKeychain.scrolling='no';liveKeychain.sandbox='allow-scripts allow-same-origin';
  const toggle=document.createElement('button');toggle.className='mobile-hit mobile-toggle';toggle.type='button';
  const previous=document.createElement('button');previous.className='mobile-hit mobile-previous';previous.type='button';previous.setAttribute('aria-label','Previous mobile screen');
  const next=document.createElement('button');next.className='mobile-hit mobile-next';next.type='button';next.setAttribute('aria-label','Next mobile screen');
- frame.append(art,toggle,previous,next);shell.append(frame);document.body.append(shell);
+ frame.append(art,liveKeychain,toggle,previous,next);shell.append(frame);document.body.append(shell);
  let route='home',expanded=false,touchX=null;
  function source(){const set=assets[route]||assets.home;return expanded?(set.expanded||set.normal):(set.normal||set.expanded)}
- function render(){const src=source();if(art.getAttribute('src')!==src)art.src=src;toggle.setAttribute('aria-label',expanded?'Minimize mobile panel':'Expand mobile panel');toggle.title=toggle.getAttribute('aria-label');shell.dataset.route=route;shell.dataset.expanded=String(expanded)}
+ function render(){const src=source();if(art.getAttribute('src')!==src)art.src=src;liveKeychain.hidden=route!=='home';toggle.setAttribute('aria-label',expanded?'Minimize mobile panel':'Expand mobile panel');toggle.title=toggle.getAttribute('aria-label');shell.dataset.route=route;shell.dataset.expanded=String(expanded)}
  function move(delta){let i=order.indexOf(route);route=order[(i+delta+order.length)%order.length];expanded=true;render()}
  toggle.addEventListener('click',()=>{expanded=!expanded;render()});previous.addEventListener('click',()=>move(-1));next.addEventListener('click',()=>move(1));
+ liveKeychain.addEventListener('load',()=>{try{const d=liveKeychain.contentDocument;d.documentElement.style.background='#111';d.body.style.background='#111';d.querySelector('canvas').style.background='#111'}catch{}});
  frame.addEventListener('touchstart',e=>{touchX=e.changedTouches[0]?.clientX??null},{passive:true});frame.addEventListener('touchend',e=>{if(touchX===null)return;const dx=(e.changedTouches[0]?.clientX??touchX)-touchX;touchX=null;if(Math.abs(dx)>55)move(dx<0?1:-1)},{passive:true});
  function size(){shell.style.setProperty('--mobile-scale',Math.min(innerWidth/390,innerHeight/844))}
  function sync(e=mq){shell.hidden=!e.matches;if(e.matches){size();for(const src of preload){const image=new Image;image.decoding='async';image.src=src}route=(location.hash.slice(1)||'home');if(!assets[route])route='home';expanded=false;render()}}
