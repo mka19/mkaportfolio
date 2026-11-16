@@ -474,6 +474,8 @@ html:not([data-unbounded="ready"]) .project-label-wrap .project-label-art{conten
  .mobile-mode{position:absolute;z-index:4;left:104px;top:249px;width:181px;height:35px;display:flex;padding:4px;border:1px solid rgba(120,120,120,.42);border-radius:18px;background:#171717;overflow:hidden}
  .mobile-top-music-cover{position:absolute;z-index:6;left:12px;top:12px;width:48px;height:48px;border-radius:50%;background:#171717;pointer-events:none}
  #mobile-shell[data-expanded="true"] .mobile-top-music-cover{display:none}
+ .mobile-expanded-dots-cover{display:none;position:absolute;z-index:1;left:13px;top:607px;width:364px;height:48px;background:#171717;pointer-events:none}
+ #mobile-shell[data-expanded="true"] .mobile-expanded-dots-cover{display:block}
  #mobile-shell[data-expanded="true"] .mobile-mode{top:330px}
  .mobile-mode-selection{position:absolute;left:4px;top:4px;width:86px;height:26px;border:1px solid rgba(125,125,125,.48);border-radius:13px;background:linear-gradient(180deg,#343434,#222);transition:transform 650ms cubic-bezier(.35,.05,.2,1)}
  #mobile-shell[data-mobile-mode="off"] .mobile-mode-selection{transform:translateX(86px)}
@@ -500,9 +502,11 @@ html:not([data-unbounded="ready"]) .project-label-wrap .project-label-art{conten
  #mobile-shell[data-expanded="true"] .mobile-live-badge.company{top:538px;height:47px}
  #mobile-shell[data-expanded="true"] .mobile-live-badge.skills{top:601px;height:47px}
  .mobile-contact{position:absolute;z-index:3;top:777px;width:37px;height:38px;padding:0;border:0;border-radius:7px;background:transparent;color:transparent;font:500 11px/1 'Zalando Sans',Arial,sans-serif;box-shadow:none}
+ .mobile-contact-visual{position:absolute;z-index:2;left:13px;top:655px;width:364px;height:95px;border:0;background:transparent;pointer-events:none}
+ .mobile-contact-visual[hidden]{display:none!important}
  .mobile-contact[data-index="0"]{left:139px}.mobile-contact[data-index="1"]{left:187px}.mobile-contact[data-index="2"]{left:235px}.mobile-contact[data-index="3"]{left:283px}
  #mobile-shell[data-expanded="true"] .mobile-contact{top:669px;width:75px;height:78px;color:#ddd}
- #mobile-shell[data-expanded="true"] .mobile-contact{border:1px solid #3f3f3f;background:linear-gradient(180deg,#252525,#434343)}
+ #mobile-shell[data-expanded="true"] .mobile-contact{border:0;background:transparent;color:transparent}
  #mobile-shell[data-expanded="true"] .mobile-contact[data-index="0"]{left:18px}#mobile-shell[data-expanded="true"] .mobile-contact[data-index="1"]{left:111px}#mobile-shell[data-expanded="true"] .mobile-contact[data-index="2"]{left:204px}#mobile-shell[data-expanded="true"] .mobile-contact[data-index="3"]{left:297px}
  .mobile-contact-reveal .mobile-contact{animation:mobile-contact-glimpse 620ms cubic-bezier(.18,.9,.22,1) both;animation-delay:calc(var(--contact-index)*520ms)}
  .mobile-contact.is-pressed{animation:mobile-contact-press 340ms cubic-bezier(.18,.9,.22,1)!important}
