@@ -464,9 +464,41 @@ html:not([data-unbounded="ready"]) .project-label-wrap .project-label-art{conten
  #mobile-shell[hidden]{display:none!important}
  .mobile-frame{position:absolute;left:50%;top:50%;width:390px;height:844px;transform:translate(-50%,-50%) scale(var(--mobile-scale,1));transform-origin:center;background:#111;overflow:hidden}
  .mobile-art{position:absolute;inset:0;width:390px;height:844px;display:block;object-fit:contain;user-select:none;-webkit-user-drag:none}
- .mobile-live-keychain{position:absolute;left:52px;top:8px;width:286px;height:236px;border:0;background:#111;color-scheme:dark;z-index:1;overflow:hidden}
+ .mobile-live-keychain{position:absolute;left:48px;top:8px;width:294px;height:229px;border:0;background:#171717;color-scheme:dark;z-index:1;overflow:hidden}
  #mobile-shell[data-expanded="true"] .mobile-live-keychain{display:none}
  .mobile-live-keychain[hidden]{display:none!important}
+ .mobile-metal{position:absolute;left:0;top:571px;width:390px;height:39px;background:transparent;z-index:2;overflow:visible}
+ .mobile-metal[hidden]{display:none!important}
+ .mobile-metal-button{position:absolute;top:0;width:38px;height:38px;margin:0;padding:0;border:0;border-radius:50%;background:transparent;overflow:hidden;transition:transform 150ms cubic-bezier(.18,.9,.22,1);box-shadow:none}
+ .mobile-metal-button[data-index="0"]{left:126px}.mobile-metal-button[data-index="1"]{left:195px}.mobile-metal-button[data-index="2"]{left:264px}.mobile-metal-button[data-index="3"]{left:333px}
+ .mobile-metal-button img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;pointer-events:none}
+ .mobile-metal-button .lit{opacity:0;transition:opacity 190ms ease}.mobile-metal-button.is-lit .lit{opacity:1}.mobile-metal-button:active{transform:scale(.92)}
+ .mobile-art,.mobile-live-keychain,.mobile-metal,.mobile-live-badge,.mobile-contact{transition:opacity 620ms cubic-bezier(.18,.9,.22,1),transform 760ms cubic-bezier(.18,.9,.22,1),filter 420ms ease}
+ .mobile-changing .mobile-art,.mobile-changing .mobile-live-keychain,.mobile-changing .mobile-metal,.mobile-changing .mobile-live-badge,.mobile-changing .mobile-contact{opacity:0;transform:translateY(8px) scale(.992)}
+ .mobile-arriving .mobile-art,.mobile-arriving .mobile-live-keychain,.mobile-arriving .mobile-metal,.mobile-arriving .mobile-live-badge,.mobile-arriving .mobile-contact{animation:mobile-soft-arrive 720ms cubic-bezier(.18,.9,.22,1) both}
+ @keyframes mobile-soft-arrive{from{opacity:0;transform:translateY(10px) scale(.992);filter:blur(2px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+ .mobile-live-badge{position:absolute;z-index:2;display:grid;place-items:center;color:#fff;font:600 11px/1 'Zalando Sans',Arial,sans-serif;border-radius:6px;background-position:center;background-size:100% 100%;overflow:hidden}
+ .mobile-badge-text{display:grid;place-items:center;width:100%;height:100%;will-change:transform,opacity}
+ .mobile-live-badge.experience{left:223px;top:391px;width:63px;height:36px;background-image:url('art/badge-experience-texture.svg')}
+ .mobile-live-badge.company{left:123px;top:443px;width:78px;height:36px;background-image:url('art/badge-company-texture.svg')}
+ .mobile-live-badge.skills{left:217px;top:495px;width:65px;height:36px;background-image:url('art/badge-skills-texture.svg')}
+ #mobile-shell[data-expanded="true"] .mobile-live-badge.experience{top:475px;height:47px}
+ #mobile-shell[data-expanded="true"] .mobile-live-badge.company{top:538px;height:47px}
+ #mobile-shell[data-expanded="true"] .mobile-live-badge.skills{top:601px;height:47px}
+ .mobile-contact{position:absolute;z-index:3;top:777px;width:37px;height:38px;padding:0;border:0;border-radius:7px;background:transparent;color:transparent;font:500 11px/1 'Zalando Sans',Arial,sans-serif;box-shadow:none}
+ .mobile-contact[data-index="0"]{left:139px}.mobile-contact[data-index="1"]{left:187px}.mobile-contact[data-index="2"]{left:235px}.mobile-contact[data-index="3"]{left:283px}
+ #mobile-shell[data-expanded="true"] .mobile-contact{top:669px;width:75px;height:78px;color:#ddd}
+ #mobile-shell[data-expanded="true"] .mobile-contact{border:1px solid #3f3f3f;background:linear-gradient(180deg,#252525,#434343)}
+ #mobile-shell[data-expanded="true"] .mobile-contact[data-index="0"]{left:18px}#mobile-shell[data-expanded="true"] .mobile-contact[data-index="1"]{left:111px}#mobile-shell[data-expanded="true"] .mobile-contact[data-index="2"]{left:204px}#mobile-shell[data-expanded="true"] .mobile-contact[data-index="3"]{left:297px}
+ .mobile-contact-reveal .mobile-contact{animation:mobile-contact-glimpse 620ms cubic-bezier(.18,.9,.22,1) both;animation-delay:calc(var(--contact-index)*520ms)}
+ .mobile-contact.is-pressed{animation:mobile-contact-press 340ms cubic-bezier(.18,.9,.22,1)!important}
+ @keyframes mobile-contact-glimpse{0%{filter:brightness(1);transform:translateY(7px);box-shadow:none}45%{filter:brightness(1.55);transform:translateY(-3px);box-shadow:0 0 18px rgba(255,255,255,.16)}100%{filter:brightness(1);transform:translateY(0);box-shadow:none}}
+ @keyframes mobile-contact-press{0%,100%{transform:scale(1);filter:brightness(1)}45%{transform:scale(.93);filter:brightness(1.45)}}
+ .mobile-identity{position:absolute;z-index:3;left:17px;top:679px;width:95px;height:37px;border-radius:5px;overflow:hidden;background:url('art/identity-background.svg') center/100% 100% no-repeat;pointer-events:none}
+ .mobile-identity .identity-track{display:flex;width:800px;height:77px;transform-origin:top left;animation:mobile-identity-scroll 13s linear infinite;will-change:transform}
+ .mobile-identity .identity-cycle{display:block;flex:none;width:400px;height:77px}
+ #mobile-shell[data-expanded="true"] .mobile-identity{left:17px;top:782px;width:244px;height:41px}
+ @keyframes mobile-identity-scroll{from{transform:scale(.61) translateX(0)}to{transform:scale(.61) translateX(-400px)}}
  .mobile-hit{position:absolute;z-index:2;padding:0;border:0;background:transparent;color:transparent;box-shadow:none;touch-action:manipulation}
  .mobile-hit:focus-visible{outline:1px solid rgba(255,255,255,.72);outline-offset:-2px}
  .mobile-toggle{left:330px;top:12px;width:52px;height:52px}
