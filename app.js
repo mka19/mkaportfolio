@@ -337,36 +337,3 @@ addEventListener('message',async e=>{const f=$('#home-keychain');if(e.source!==f
 
 // Keep live Unbounded when loaded; original Figma lettering is the offline fallback.
 if(document.fonts){document.fonts.load('500 34px Unbounded').then(faces=>{if(faces.some(f=>f.status==='loaded'))document.documentElement.dataset.unbounded='ready';}).catch(()=>{});}
-
-// Mobile uses the approved 390x844 Figma exports instead of shrinking the
-// 1920px desktop console. Desktop remains entirely on the original renderer.
-(()=>{
- const mq=matchMedia('(max-width:700px)');
- const assets={
-  home:{normal:'art/mobile/home-normal.svg',expanded:'art/mobile/home-expanded.svg'},
-  projects:{expanded:'art/mobile/projects-expanded.svg'},
-  gallery:{expanded:'art/mobile/gallery-expanded.svg'},
-  license:{normal:'art/mobile/license-normal.svg',expanded:'art/mobile/license-expanded.svg'},
-  keyboard:{expanded:'art/mobile/keyboard-expanded.svg'},
-  mixtape:{expanded:'art/mobile/music-expanded-a.svg'},
-  movies:{expanded:'art/mobile/music-expanded-b.svg'}
- };
- const order=['home','projects','gallery','license','mixtape','movies','keyboard'];
- const preload=[...new Set(Object.values(assets).flatMap(set=>Object.values(set)))];
- const shell=document.createElement('section');shell.id='mobile-shell';shell.hidden=true;shell.setAttribute('aria-label','MKA mobile portfolio');
- const frame=document.createElement('div');frame.className='mobile-frame';
- const art=document.createElement('img');art.className='mobile-art';art.alt='';art.decoding='async';
- const toggle=document.createElement('button');toggle.className='mobile-hit mobile-toggle';toggle.type='button';
- const previous=document.createElement('button');previous.className='mobile-hit mobile-previous';previous.type='button';previous.setAttribute('aria-label','Previous mobile screen');
- const next=document.createElement('button');next.className='mobile-hit mobile-next';next.type='button';next.setAttribute('aria-label','Next mobile screen');
- frame.append(art,toggle,previous,next);shell.append(frame);document.body.append(shell);
- let route='home',expanded=false,touchX=null;
- function source(){const set=assets[route]||assets.home;return expanded?(set.expanded||set.normal):(set.normal||set.expanded)}
- function render(){const src=source();if(art.getAttribute('src')!==src)art.src=src;toggle.setAttribute('aria-label',expanded?'Minimize mobile panel':'Expand mobile panel');toggle.title=toggle.getAttribute('aria-label');shell.dataset.route=route;shell.dataset.expanded=String(expanded)}
- function move(delta){let i=order.indexOf(route);route=order[(i+delta+order.length)%order.length];expanded=true;render()}
- toggle.addEventListener('click',()=>{expanded=!expanded;render()});previous.addEventListener('click',()=>move(-1));next.addEventListener('click',()=>move(1));
- frame.addEventListener('touchstart',e=>{touchX=e.changedTouches[0]?.clientX??null},{passive:true});frame.addEventListener('touchend',e=>{if(touchX===null)return;const dx=(e.changedTouches[0]?.clientX??touchX)-touchX;touchX=null;if(Math.abs(dx)>55)move(dx<0?1:-1)},{passive:true});
- function size(){shell.style.setProperty('--mobile-scale',Math.min(innerWidth/390,innerHeight/844))}
- function sync(e=mq){shell.hidden=!e.matches;if(e.matches){size();for(const src of preload){const image=new Image;image.decoding='async';image.src=src}route=(location.hash.slice(1)||'home');if(!assets[route])route='home';expanded=false;render()}}
- mq.addEventListener('change',sync);addEventListener('resize',()=>{if(mq.matches)size()},{passive:true});addEventListener('hashchange',()=>{if(!mq.matches)return;const nextRoute=location.hash.slice(1)||'home';if(assets[nextRoute]){route=nextRoute;expanded=false;render()}});sync();
-})();

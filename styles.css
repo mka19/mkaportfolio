@@ -455,22 +455,6 @@ html:not([data-unbounded="ready"]) .project-label-wrap .project-label-art{conten
 .project-view{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;background:transparent!important}
 #project-focus{border:1px solid rgba(255,255,255,.28)!important;background:linear-gradient(180deg,rgba(26,26,26,.78),rgba(128,128,128,.52))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important}
 
-/* Approved phone composition. Never scale the desktop console into mobile. */
-#mobile-shell{display:none}
-@media(max-width:700px){
- html,body{width:100%;height:100%;overflow:hidden;background:#111}
- #fit{display:none!important}
- #mobile-shell{position:fixed;inset:0;display:block;background:#111;overflow:hidden;z-index:1000}
- #mobile-shell[hidden]{display:none!important}
- .mobile-frame{position:absolute;left:50%;top:50%;width:390px;height:844px;transform:translate(-50%,-50%) scale(var(--mobile-scale,1));transform-origin:center;background:#111;overflow:hidden}
- .mobile-art{position:absolute;inset:0;width:390px;height:844px;display:block;object-fit:contain;user-select:none;-webkit-user-drag:none}
- .mobile-hit{position:absolute;z-index:2;padding:0;border:0;background:transparent;color:transparent;box-shadow:none;touch-action:manipulation}
- .mobile-hit:focus-visible{outline:1px solid rgba(255,255,255,.72);outline-offset:-2px}
- .mobile-toggle{left:330px;top:12px;width:52px;height:52px}
- .mobile-previous{left:326px;top:778px;width:30px;height:58px}
- .mobile-next{left:356px;top:778px;width:30px;height:58px}
-}
-
 /* Keep the project surface flush with its existing frame; no side gutters. */
 .project-view{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;background-color:transparent!important}
 #project-focus{border:1px solid rgba(255,255,255,.28)!important;background:linear-gradient(180deg,rgba(26,26,26,.78),rgba(128,128,128,.52))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important}
