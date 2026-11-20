@@ -464,6 +464,13 @@ html:not([data-unbounded="ready"]) .project-label-wrap .project-label-art{conten
  #mobile-shell[hidden]{display:none!important}
  .mobile-frame{position:absolute;left:50%;top:50%;width:390px;height:844px;transform:translate(-50%,-50%) scale(var(--mobile-scale,1));transform-origin:center;background:#111;overflow:hidden}
  .mobile-art{position:absolute;inset:0;width:390px;height:844px;display:block;object-fit:contain;user-select:none;-webkit-user-drag:none}
+ .mobile-route-ghost{z-index:12;pointer-events:none;transition:transform 760ms cubic-bezier(.16,.82,.2,1),opacity 620ms ease,filter 620ms ease!important}
+ .mobile-route-ghost.is-leaving{transform:translateX(var(--route-exit-x));opacity:0;filter:blur(2px)}
+ .mobile-route-enter{z-index:11;transform:translateX(var(--route-enter-x));opacity:0;filter:blur(2px);transition:transform 760ms cubic-bezier(.16,.82,.2,1),opacity 620ms ease,filter 620ms ease!important}
+ .mobile-route-enter.is-arriving{transform:translateX(0);opacity:1;filter:blur(0)}
+ .mobile-art[hidden],.mobile-runtime[hidden],.mobile-nav-hit[hidden],.mobile-expanded-home[hidden],.mobile-top-music-cover[hidden],.mobile-expanded-dots-cover[hidden],.mobile-mode[hidden],.mobile-heading[hidden],.mobile-live-badge[hidden],.mobile-contact[hidden],.mobile-identity[hidden],.mobile-contact-visual[hidden],.mobile-metal[hidden],.mobile-dots[hidden],.mobile-dial[hidden],.mobile-music-hit[hidden],.mobile-media[hidden]{display:none!important}
+ .mobile-runtime{position:absolute;inset:0;width:390px;height:844px;border:0;background:#111;z-index:1}
+ .mobile-runtime[data-overlay="true"]{left:10px;top:66px;width:370px;height:700px;inset:auto;border-radius:7px;background:#0b0b0b}
  .mobile-live-keychain{position:absolute;left:48px;top:8px;width:294px;height:229px;border:0!important;outline:0;background:#171717;color-scheme:dark;z-index:1;overflow:hidden;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 11px,#000 calc(100% - 11px),transparent 100%),linear-gradient(to bottom,transparent 0,#000 9px,#000 calc(100% - 11px),transparent 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent 0,#000 11px,#000 calc(100% - 11px),transparent 100%),linear-gradient(to bottom,transparent 0,#000 9px,#000 calc(100% - 11px),transparent 100%);mask-composite:intersect}
  #mobile-shell[data-expanded="true"] .mobile-live-keychain{display:none}
  .mobile-live-keychain[hidden]{display:none!important}
@@ -531,6 +538,11 @@ html:not([data-unbounded="ready"]) .project-label-wrap .project-label-art{conten
  .mobile-toggle{left:330px;top:12px;width:52px;height:52px}
  .mobile-previous{left:326px;top:778px;width:30px;height:58px}
  .mobile-next{left:356px;top:778px;width:30px;height:58px}
+ .mobile-nav-hit{z-index:8}
+ .mobile-expanded-home{z-index:8;left:14px;top:13px;width:72px;height:46px}
+ #mobile-shell[data-route="cv"] .mobile-expanded-home,#mobile-shell[data-route="about"] .mobile-expanded-home{color:#fff;background:linear-gradient(180deg,#252525,#434343);border:1px solid #454545;border-radius:7px;font:500 12px/1 'Zalando Sans',Arial,sans-serif}
+ #mobile-shell[data-route="cv"] .mobile-toggle,#mobile-shell[data-route="about"] .mobile-toggle{color:#fff;background:linear-gradient(180deg,#252525,#434343);border:1px solid #454545;border-radius:7px}
+ #mobile-shell[data-route="cv"] .mobile-toggle::before,#mobile-shell[data-route="about"] .mobile-toggle::before{content:'↙↗';font-size:15px}
 }
 
 /* Keep the project surface flush with its existing frame; no side gutters. */

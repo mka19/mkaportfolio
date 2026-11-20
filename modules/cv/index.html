@@ -155,6 +155,38 @@
     @media (prefers-reduced-motion: reduce) {
       #frame { scroll-behavior: auto; }
     }
+    @media (max-width: 700px) {
+      #moving-text {
+        top: calc(100% + 36px);
+        left: 7%;
+        width: 86%;
+        font-size: 20px;
+        line-height: 1.16;
+        letter-spacing: -.012em;
+        text-align: left;
+      }
+      .section + .copy { margin-top: 24px; }
+      .section + .section { margin-top: 40px; }
+      .copy + .section { margin-top: 52px; }
+      .copy + .copy { margin-top: 18px; }
+    }
+    html.mobile .perspective { perspective: none; }
+    html.mobile .tilted-plane { transform: none; }
+    html.mobile, html.mobile body, html.mobile #app, html.mobile #frame {
+      width: 390px;
+      height: 844px;
+      max-width: 390px;
+      overflow: hidden;
+    }
+    html.mobile #moving-text {
+      top: calc(100% + 36px);
+      left: 27px;
+      width: 336px;
+      font-size: 20px;
+      line-height: 1.16;
+      letter-spacing: -.012em;
+      text-align: left;
+    }
     @media print {
       @page { size: A4; margin: 18mm; }
       html, body { width: 100%; height: auto; overflow: visible; background: #fff; }
@@ -247,8 +279,11 @@
         return text.scrollHeight + frame.clientHeight * 1.65;
       }
       function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
+      const mobileMode = new URLSearchParams(location.search).has('mobile');
+      if (mobileMode) document.documentElement.classList.add('mobile');
       function paint() {
-        text.style.transform = `translate3d(-50%, ${-position}px, 0)`;
+        const x = mobileMode || innerWidth <= 700 ? '0px' : '-50%';
+        text.style.transform = `translate3d(${x}, ${-position}px, 0)`;
       }
       function step(now) {
         const dt = Math.min((now - lastTime) / 1000, 0.045);
