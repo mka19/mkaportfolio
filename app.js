@@ -342,7 +342,7 @@ if(document.fonts){document.fonts.load('500 34px Unbounded').then(faces=>{if(fac
 // Mobile uses the approved 390x844 Figma exports instead of shrinking the
 // 1920px desktop console. Desktop remains entirely on the original renderer.
 (()=>{
- const mq=matchMedia('(max-width:700px)');
+ const mq=matchMedia('(max-width:900px)');
  const assets={
   home:{normal:'art/mobile/home-normal.svg',expanded:'art/mobile/home-expanded.svg'},
   projects:{expanded:'art/mobile/projects-expanded.svg'},
