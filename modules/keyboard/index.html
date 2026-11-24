@@ -571,6 +571,7 @@
   window.addEventListener('blur',()=>rows.forEach(x=>x.reset?.()));
   fitStage();
   layout();
+  select(rows[0]);
   window.__keyboardQA={rows,select,get active(){return activeTheme?.name||null;}};
 })();
 </script>
