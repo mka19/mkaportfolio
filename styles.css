@@ -519,12 +519,12 @@ html:not([data-unbounded="ready"]) .project-label-wrap .project-label-art{conten
  .mobile-contact.is-pressed{animation:mobile-contact-press 340ms cubic-bezier(.18,.9,.22,1)!important}
  @keyframes mobile-contact-glimpse{0%{filter:brightness(1);transform:translateY(7px);box-shadow:none}45%{filter:brightness(1.55);transform:translateY(-3px);box-shadow:0 0 18px rgba(255,255,255,.16)}100%{filter:brightness(1);transform:translateY(0);box-shadow:none}}
  @keyframes mobile-contact-press{0%,100%{transform:scale(1);filter:brightness(1)}45%{transform:scale(.93);filter:brightness(1.45)}}
- .mobile-identity{position:absolute;z-index:3;left:17px;top:679px;width:95px;height:37px;border-radius:5px;overflow:hidden;background:url('art/identity-background.svg') center/100% 100% no-repeat;pointer-events:none}
+ .mobile-identity{position:absolute;z-index:3;left:17px;top:679px;width:95px;height:37px;border-radius:5px;overflow:hidden;background-color:#171717;background-image:url('art/identity-background.svg');background-position:center;background-size:100% 100%;background-repeat:no-repeat;pointer-events:none}
  .mobile-identity .identity-track{display:flex;width:800px;height:77px;transform-origin:top left;animation:mobile-identity-scroll 13s linear infinite;will-change:transform}
  .mobile-identity .identity-cycle{display:block;flex:none;width:400px;height:77px}
  .mobile-identity .identity-light{animation:mobile-identity-glow 4.8s ease-in-out infinite}
  @keyframes mobile-identity-glow{0%,60%,100%{fill:#6d0808;filter:none}72%,82%{fill:#ff2929;filter:drop-shadow(0 0 3px #ff3434) drop-shadow(0 0 7px #d41515)}}
- #mobile-shell[data-expanded="true"] .mobile-identity{left:17px;top:782px;width:244px;height:41px}
+ #mobile-shell[data-expanded="true"] .mobile-identity{left:17px;top:782px;width:244px;height:41px;box-shadow:0 0 0 3px #171717}
  @keyframes mobile-identity-scroll{from{transform:scale(.61) translateX(0)}to{transform:scale(.61) translateX(-400px)}}
  .mobile-dial{position:absolute;z-index:4;left:329px;top:677px;width:44px;height:44px;border:0;background:transparent}.mobile-dial[hidden],.mobile-music-hit[hidden],.mobile-media[hidden]{display:none!important}
  .mobile-music-hit{position:absolute;z-index:5;left:329px;top:677px;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:transparent;box-shadow:none}
